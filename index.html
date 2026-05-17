@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clínica Jardel Santiago · Sistema</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E◈%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0f0e0d;--surface:#1a1815;--surface2:#232018;--border:#2e2a24;--border2:#3d3830;--text:#e8e0d4;--text2:#9a9080;--text3:#5a5248;--accent:#c4a882;--accent2:#8fbe9a;--accent3:#e07b6a;--accent4:#7a9ec4;--gold:#d4aa70;--radius:12px;--radius-sm:8px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6;}
+  ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+  #auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 30% 20%,#1e1a14 0%,#0f0e0d 70%);}
+  .auth-box{width:400px;padding:52px 44px;background:var(--surface);border:1px solid var(--border);border-radius:20px;text-align:center;}
+  .auth-mark{font-family:'Fraunces',serif;font-size:30px;font-weight:300;font-style:italic;color:var(--accent);margin-bottom:6px;letter-spacing:0.02em;}
+  .auth-title{font-family:'Fraunces',serif;font-size:22px;font-weight:300;color:var(--text);margin-bottom:4px;letter-spacing:0.01em;}
+  .auth-sub{font-size:12px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:40px;}
+  .field-group{margin-bottom:16px;text-align:left;}
+  .field-label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text2);margin-bottom:6px;display:block;}
+  .field-input{width:100%;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .2s;}
+  .field-input:focus{border-color:var(--accent);}
+  .btn-primary{width:100%;padding:13px;background:var(--accent);color:#1a1208;border:none;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:opacity .2s;margin-top:8px;}
+  .btn-primary:hover{opacity:.9;}
+  .auth-error{margin-top:12px;padding:10px 14px;background:rgba(224,123,106,.1);border:1px solid rgba(224,123,106,.3);border-radius:var(--radius-sm);color:var(--accent3);font-size:13px;display:none;}
+  #app{display:none;min-height:100vh;}
+  .sidebar{position:fixed;left:0;top:0;bottom:0;width:230px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;}
+  .sidebar-header{padding:28px 22px 22px;border-bottom:1px solid var(--border);}
+  .sidebar-brand{font-family:'Fraunces',serif;font-size:18px;font-weight:300;font-style:italic;color:var(--accent);margin-bottom:2px;}
+  .sidebar-tag{font-size:10px;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;}
+  .sidebar-nav{padding:16px 10px;flex:1;overflow-y:auto;}
+  .nav-section-label{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);padding:0 10px;margin-bottom:6px;margin-top:16px;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius-sm);color:var(--text2);font-size:13.5px;cursor:pointer;transition:all .15s;margin-bottom:2px;border:none;background:none;width:100%;text-align:left;}
+  .nav-item:hover{background:var(--surface2);color:var(--text);}
+  .nav-item.active{background:rgba(196,168,130,.12);color:var(--accent);}
+  .nav-icon{font-size:16px;width:20px;text-align:center;}
+  .sidebar-footer{padding:14px 10px;border-top:1px solid var(--border);}
+  .user-info{padding:0 10px 10px;font-size:11px;color:var(--text3);}
+  .user-info-name{color:var(--text2);font-size:13px;margin-bottom:2px;word-break:break-all;}
+  .btn-logout{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius-sm);color:var(--text3);font-size:13px;cursor:pointer;transition:all .15s;border:none;background:none;width:100%;}
+  .btn-logout:hover{color:var(--accent3);}
+  .main{margin-left:230px;padding:32px 36px;min-height:100vh;}
+  .page{display:none;} .page.active{display:block;}
+  .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;gap:16px;}
+  .page-title{font-family:'Fraunces',serif;font-size:26px;font-weight:300;color:var(--text);margin-bottom:4px;letter-spacing:0.01em;}
+  .page-sub{font-size:13px;color:var(--text2);}
+  .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px;}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
+  .stat-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+  .stat-value{font-family:'Fraunces',serif;font-size:32px;font-weight:300;color:var(--text);}
+  .stat-sub{font-size:12px;color:var(--text2);margin-top:4px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;}
+  .card-title{font-family:'Fraunces',serif;font-size:16px;font-weight:400;color:var(--text);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .table{width:100%;border-collapse:collapse;}
+  .table th{text-align:left;padding:10px 12px;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border);}
+  .table td{padding:14px 12px;border-bottom:1px solid var(--border);font-size:13.5px;color:var(--text2);vertical-align:middle;}
+  .table tr:last-child td{border-bottom:none;} .table tr:hover td{background:var(--surface2);}
+  .table .name{color:var(--text);font-weight:400;}
+  .badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;}
+  .badge-green{background:rgba(143,190,154,.12);color:var(--accent2);}
+  .badge-amber{background:rgba(196,168,130,.12);color:var(--accent);}
+  .badge-blue{background:rgba(122,158,196,.12);color:var(--accent4);}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;border:none;}
+  .btn-sm{padding:5px 12px;font-size:12px;}
+  .btn-accent{background:var(--accent);color:#1a1208;} .btn-accent:hover{opacity:.85;}
+  .btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border);} .btn-ghost:hover{border-color:var(--border2);color:var(--text);}
+  .btn-danger{background:rgba(224,123,106,.12);color:var(--accent3);border:1px solid rgba(224,123,106,.2);} .btn-danger:hover{background:rgba(224,123,106,.2);}
+  .btn-green{background:rgba(143,190,154,.12);color:var(--accent2);border:1px solid rgba(143,190,154,.2);} .btn-green:hover{background:rgba(143,190,154,.2);}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;pointer-events:none;transition:opacity .2s;}
+  .modal-overlay.open{opacity:1;pointer-events:all;}
+  .modal{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:32px;width:520px;max-width:90vw;max-height:90vh;overflow-y:auto;transform:translateY(8px);transition:transform .2s;}
+  .modal-overlay.open .modal{transform:translateY(0);}
+  .modal-title{font-family:'Fraunces',serif;font-size:20px;font-weight:300;color:var(--text);margin-bottom:20px;}
+  .modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;padding-top:20px;border-top:1px solid var(--border);}
+  .form-group{margin-bottom:16px;}
+  .form-label{display:block;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text2);margin-bottom:6px;}
+  .form-input,.form-select,.form-textarea{width:100%;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13.5px;outline:none;transition:border-color .2s;}
+  .form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent);}
+  .form-select option{background:var(--surface2);}
+  .form-textarea{resize:vertical;min-height:80px;}
+  .link-box{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-top:16px;}
+  .link-text{flex:1;font-size:12px;color:var(--text2);word-break:break-all;font-family:monospace;}
+  .back-btn{display:inline-flex;align-items:center;gap:6px;color:var(--text2);font-size:13px;cursor:pointer;margin-bottom:20px;transition:color .15s;border:none;background:none;padding:0;}
+  .back-btn:hover{color:var(--text);}
+  .patient-header{display:flex;align-items:center;gap:16px;margin-bottom:28px;flex-wrap:wrap;}
+  .patient-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--gold));display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:22px;color:#1a1208;font-weight:300;flex-shrink:0;}
+  .scales-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+  .scale-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:border-color .2s;}
+  .scale-card:hover{border-color:var(--border2);}
+  .scale-card-title{font-family:'Fraunces',serif;font-size:15px;font-weight:400;color:var(--text);margin-bottom:6px;}
+  .scale-card-desc{font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.5;}
+  .scale-meta{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+  .scale-actions{display:flex;gap:8px;flex-wrap:wrap;}
+  .question-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-bottom:12px;}
+  .question-item-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .question-number{font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--text3);text-transform:uppercase;}
+  .option-row{display:flex;gap:8px;align-items:center;margin-bottom:6px;}
+  .add-option-btn{font-size:12px;color:var(--accent);cursor:pointer;background:none;border:none;padding:4px 0;margin-top:4px;}
+  .list-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-bottom:10px;cursor:pointer;transition:border-color .2s;}
+  .list-item:hover{border-color:var(--border2);}
+  .list-item-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .list-item-date{font-size:12px;color:var(--text3);}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:12px 18px;font-size:13px;color:var(--text);z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s;}
+  .toast.show{transform:translateY(0);opacity:1;}
+  .loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--text3);font-size:13px;}
+  .empty-state{text-align:center;padding:48px 20px;color:var(--text3);}
+  .empty-state-icon{font-size:36px;margin-bottom:12px;opacity:.5;}
+  .empty-state-text{font-size:14px;}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .resposta-section{margin-bottom:20px;}
+  .resposta-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:6px;}
+  .resposta-value{font-size:14px;color:var(--text);line-height:1.6;}
+  @media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr);}.grid-2{grid-template-columns:1fr;}.sidebar{width:200px;}.main{margin-left:200px;padding:24px 20px;}}
+</style>
+</head>
+<body>
+
+<div id="auth-screen">
+  <div class="auth-box">
+    <div class="auth-mark">Clínica</div>
+    <div class="auth-title">Jardel Santiago</div>
+    <div class="auth-sub">Sistema Clínico</div>
+    <div class="field-group"><label class="field-label">E-mail</label><input type="email" class="field-input" id="auth-email" placeholder="seu@email.com"></div>
+    <div class="field-group"><label class="field-label">Senha</label><input type="password" class="field-input" id="auth-pass" placeholder="••••••••"></div>
+    <button class="btn-primary" id="btn-login">Entrar</button>
+    <div class="auth-error" id="auth-error"></div>
+  </div>
+</div>
+
+<div id="app">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-brand">Clínica</div>
+      <div class="sidebar-tag">Jardel Santiago</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Visão geral</div>
+      <button class="nav-item active" data-page="dashboard"><span class="nav-icon">◈</span> Dashboard</button>
+      <div class="nav-section-label">Atendimento</div>
+      <button class="nav-item" data-page="pacientes"><span class="nav-icon">◉</span> Pacientes</button>
+      <div class="nav-section-label">Avaliação</div>
+      <button class="nav-item" data-page="escalas"><span class="nav-icon">◍</span> Escalas & Questionários</button>
+      <button class="nav-item" data-page="respostas"><span class="nav-icon">◌</span> Respostas</button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-info-name" id="user-display">—</div>
+        <div>Psicólogo</div>
+      </div>
+      <button class="btn-logout" id="btn-logout"><span>⎋</span> Sair</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div><div class="page-title" id="dash-greeting">Bem-vindo, Jardel.</div><div class="page-sub">Resumo da sua clínica</div></div>
+        <button class="btn btn-accent" id="btn-novo-paciente-dash">+ Novo paciente</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">Pacientes ativos</div><div class="stat-value" id="stat-pacientes">0</div><div class="stat-sub">cadastrados</div></div>
+        <div class="stat-card"><div class="stat-label">Escalas</div><div class="stat-value" id="stat-escalas">0</div><div class="stat-sub">padrão + personalizadas</div></div>
+        <div class="stat-card"><div class="stat-label">Respostas</div><div class="stat-value" id="stat-respostas">0</div><div class="stat-sub">recebidas</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card"><div class="card-title">Pacientes recentes</div><div id="dash-pacientes-list"></div></div>
+        <div class="card"><div class="card-title">Últimas respostas</div><div id="dash-respostas-list"></div></div>
+      </div>
+    </div>
+
+    <div class="page" id="page-pacientes">
+      <div class="page-header">
+        <div><div class="page-title">Pacientes</div><div class="page-sub">Gerencie pacientes e envios</div></div>
+        <button class="btn btn-accent" id="btn-novo-paciente">+ Novo paciente</button>
+      </div>
+      <div class="card">
+        <table class="table">
+          <thead><tr><th>Nome</th><th>Adicionado em</th><th>Respostas</th><th>Status</th><th>Ações</th></tr></thead>
+          <tbody id="pacientes-tbody"><tr><td colspan="5" class="loading">Carregando...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="page" id="page-paciente-detalhe">
+      <button class="back-btn" data-page="pacientes">← Voltar</button>
+      <div class="patient-header">
+        <div class="patient-avatar" id="detalhe-avatar">J</div>
+        <div style="flex:1;min-width:200px"><div class="page-title" id="detalhe-nome">Paciente</div><div class="page-sub" id="detalhe-info">—</div></div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-accent btn-sm" id="btn-enviar-escala-detalhe">📋 Enviar escala</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Histórico de respostas</div>
+        <div id="detalhe-respostas"></div>
+      </div>
+    </div>
+
+    <div class="page" id="page-escalas">
+      <div class="page-header">
+        <div><div class="page-title">Escalas & Questionários</div><div class="page-sub">Instrumentos padrão e personalizados</div></div>
+        <button class="btn btn-accent" id="btn-nova-escala">+ Nova escala</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Escalas padrão (incluídas)</div>
+        <div class="scales-grid" id="escalas-padrao-grid"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Minhas escalas personalizadas <span id="escalas-custom-count" class="badge badge-amber">0</span></div>
+        <div class="scales-grid" id="escalas-custom-grid"></div>
+      </div>
+    </div>
+
+    <div class="page" id="page-respostas">
+      <div class="page-header"><div><div class="page-title">Respostas</div><div class="page-sub">Todas as respostas recebidas</div></div></div>
+      <div class="card"><div id="respostas-list"><div class="loading">Carregando...</div></div></div>
+    </div>
+  </main>
+</div>
+
+<div class="modal-overlay" id="modal-novo-paciente">
+  <div class="modal">
+    <div class="modal-title">Novo Paciente</div>
+    <div class="form-group"><label class="form-label">Nome completo</label><input type="text" class="form-input" id="np-nome" placeholder="Nome do paciente"></div>
+    <div class="form-group"><label class="form-label">Observações internas (opcional)</label><textarea class="form-textarea" id="np-obs" placeholder="Diagnóstico, notas clínicas..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-close="modal-novo-paciente">Cancelar</button>
+      <button class="btn btn-accent" id="btn-criar-paciente">Criar paciente</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-enviar-escala">
+  <div class="modal">
+    <div class="modal-title">Enviar Escala</div>
+    <div class="form-group"><label class="form-label">Selecionar escala</label><select class="form-select" id="enviar-escala-select"></select></div>
+    <div class="link-box" id="escala-link-box" style="display:none"><div class="link-text" id="escala-link-text">—</div><button class="btn btn-ghost btn-sm" id="btn-copiar-escala-link">Copiar</button></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-close="modal-enviar-escala">Fechar</button>
+      <button class="btn btn-accent" id="btn-gerar-escala-link">Gerar link</button>
+      <button class="btn btn-green" id="btn-wpp-escala" style="display:none">WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-nova-escala" style="align-items:flex-start;padding:24px 0;overflow-y:auto;">
+  <div class="modal" style="width:640px;margin:auto;">
+    <div class="modal-title">Criar Nova Escala</div>
+    <div class="form-group"><label class="form-label">Nome da escala</label><input type="text" class="form-input" id="ne-nome" placeholder="Ex: Escala de Ansiedade — Sessão 3"></div>
+    <div class="form-group"><label class="form-label">Descrição (opcional)</label><input type="text" class="form-input" id="ne-desc" placeholder="Breve descrição"></div>
+    <div class="form-group"><label class="form-label">Instruções para o paciente (opcional)</label><textarea class="form-textarea" id="ne-instrucoes" placeholder="Ex: Responda com base na última semana..."></textarea></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;margin-top:8px;">
+      <div style="font-size:13px;font-weight:500;color:var(--text)">Perguntas</div>
+      <button class="btn btn-ghost btn-sm" id="btn-add-pergunta">+ Adicionar pergunta</button>
+    </div>
+    <div id="builder-questions"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-close="modal-nova-escala">Cancelar</button>
+      <button class="btn btn-accent" id="btn-salvar-escala">Salvar escala</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-ver-resposta">
+  <div class="modal" style="width:580px;">
+    <div class="modal-title" id="modal-resposta-title">Resposta</div>
+    <div id="modal-resposta-content"></div>
+    <div class="modal-footer"><button class="btn btn-ghost" data-close="modal-ver-resposta">Fechar</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAkUJSOjmGrd4YOiillnxC32QZzcekJn3o",
+  authDomain: "sistema-jardel-santiago.firebaseapp.com",
+  projectId: "sistema-jardel-santiago",
+  storageBucket: "sistema-jardel-santiago.firebasestorage.app",
+  messagingSenderId: "1003400669772",
+  appId: "1:1003400669772:web:7e210003ef907337bc62e9"
+};
+
+const PATIENT_BASE_URL = "https://jardelsantiagopsi.github.io/sistema/responder.html";
+
+const fbApp = initializeApp(firebaseConfig);
+const auth = getAuth(fbApp);
+const db = getFirestore(fbApp);
+
+let currentPacienteId = null;
+let currentEscalaLinkUrl = '';
+let builderPerguntas = [];
+let cachedPacientes = [];
+let cachedEscalas = [];
+let cachedRespostas = [];
+
+const ESCALAS_PADRAO = [
+  { id:'phq9', nome:'PHQ-9', tipo:'padrao', desc:'Rastreio de depressão — 9 itens. Pontuação 0–27.',
+    perguntas:[
+      {texto:'Pouco interesse ou prazer em fazer as coisas',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Se sentir "pra baixo", deprimido(a) ou sem perspectiva',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Dificuldade para adormecer ou permanecer dormindo',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Se sentir cansado(a) ou com pouca energia',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Falta de apetite ou comer demais',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Se sentir mal consigo mesmo(a)',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Dificuldade para se concentrar',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Lentidão para se movimentar ou falar, ou agitação',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Pensamentos de que seria melhor estar morto(a)',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+    ]},
+  { id:'gad7', nome:'GAD-7', tipo:'padrao', desc:'Rastreio de ansiedade generalizada — 7 itens.',
+    perguntas:[
+      {texto:'Se sentir nervoso(a), ansioso(a) ou no limite',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Não conseguir parar ou controlar as preocupações',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Se preocupar muito com diversas coisas',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Dificuldade para relaxar',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Ficar tão agitado(a) que é difícil ficar parado(a)',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Ficar facilmente aborrecido(a) ou irritado(a)',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Sentir medo como se algo horrível fosse acontecer',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+    ]},
+  { id:'bdi', nome:'BDI-II (resumido)', tipo:'padrao', desc:'Inventário de Depressão de Beck — versão resumida.',
+    perguntas:[
+      {texto:'Tristeza',tipo:'multipla',opcoes:['Não me sinto triste','Me sinto triste grande parte do tempo','Estou sempre triste','Estou tão triste que não consigo suportar']},
+      {texto:'Pessimismo',tipo:'multipla',opcoes:['Não estou desanimado com meu futuro','Estou mais desanimado do que de costume','Não espero que as coisas deem certo','Meu futuro não tem esperança']},
+      {texto:'Fracasso',tipo:'multipla',opcoes:['Não me sinto um fracasso','Fracassei mais do que devia','Vejo muitos fracassos em minha vida','Sou um fracasso completo']},
+      {texto:'Perda de prazer',tipo:'multipla',opcoes:['Tenho o mesmo prazer nas coisas','Não tenho tanto prazer como antes','Tenho muito pouco prazer','Não consigo ter nenhum prazer']},
+    ]},
+];
+
+const $ = id => document.getElementById(id);
+function fmtDate(ts) {
+  if (!ts) return '—';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+function toast(msg) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+function openModal(id) { $(id).classList.add('open'); }
+function closeModal(id) { $(id).classList.remove('open'); }
+function getSaudacao() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Bom dia';
+  if (h < 18) return 'Boa tarde';
+  return 'Boa noite';
+}
+
+onAuthStateChanged(auth, user => {
+  if (user) {
+    $('auth-screen').style.display = 'none';
+    $('app').style.display = 'block';
+    $('user-display').textContent = user.email;
+    $('dash-greeting').textContent = `${getSaudacao()}, Jardel.`;
+    initAll();
+  } else {
+    $('auth-screen').style.display = 'flex';
+    $('app').style.display = 'none';
+  }
+});
+
+$('btn-login').addEventListener('click', async () => {
+  const err = $('auth-error'); err.style.display = 'none';
+  try { await signInWithEmailAndPassword(auth, $('auth-email').value.trim(), $('auth-pass').value); }
+  catch(e) { err.textContent = 'E-mail ou senha incorretos.'; err.style.display = 'block'; }
+});
+$('auth-pass').addEventListener('keydown', e => { if(e.key==='Enter') $('btn-login').click(); });
+$('btn-logout').addEventListener('click', () => signOut(auth));
+
+function navigate(page, pid) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  $('page-'+page).classList.add('active');
+  const nb = document.querySelector(`.nav-item[data-page="${page}"]`);
+  if (nb) nb.classList.add('active');
+  if (page==='paciente-detalhe' && pid) { currentPacienteId = pid; renderPacienteDetalhe(pid); }
+  if (page==='escalas') renderEscalas();
+  if (page==='respostas') renderRespostas();
+  if (page==='dashboard') renderDashboard();
+  if (page==='pacientes') renderPacientes();
+}
+
+function initAll() {
+  document.querySelectorAll('.nav-item').forEach(b => b.addEventListener('click', () => navigate(b.dataset.page)));
+  document.querySelectorAll('.back-btn').forEach(b => b.addEventListener('click', () => navigate(b.dataset.page)));
+  document.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => closeModal(b.dataset.close)));
+  document.querySelectorAll('.modal-overlay').forEach(o => o.addEventListener('click', e => { if(e.target===o) o.classList.remove('open'); }));
+
+  $('btn-novo-paciente-dash').addEventListener('click', () => openModal('modal-novo-paciente'));
+  $('btn-novo-paciente').addEventListener('click', () => openModal('modal-novo-paciente'));
+  $('btn-criar-paciente').addEventListener('click', criarPaciente);
+  $('btn-enviar-escala-detalhe').addEventListener('click', abrirEnviarEscala);
+  $('btn-nova-escala').addEventListener('click', () => { builderPerguntas=[]; renderBuilder(); openModal('modal-nova-escala'); });
+  $('btn-add-pergunta').addEventListener('click', adicionarPergunta);
+  $('btn-salvar-escala').addEventListener('click', salvarEscala);
+  $('btn-gerar-escala-link').addEventListener('click', gerarEscalaLink);
+  $('btn-copiar-escala-link').addEventListener('click', () => navigator.clipboard.writeText(currentEscalaLinkUrl).then(() => toast('Link copiado!')));
+  $('btn-wpp-escala').addEventListener('click', () => window.open(`https://wa.me/?text=${encodeURIComponent('Olá! Por favor responda este questionário:\n'+currentEscalaLinkUrl)}`,'_blank'));
+
+  onSnapshot(collection(db,'pacientes'), snap => {
+    cachedPacientes = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0));
+    renderPacientes(); renderDashboard(); updateStats();
+  });
+  onSnapshot(collection(db,'escalas'), snap => {
+    cachedEscalas = snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderEscalas(); updateStats();
+  });
+  onSnapshot(collection(db,'respostas'), snap => {
+    cachedRespostas = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0));
+    renderRespostas(); renderDashboard(); updateStats();
+    if (currentPacienteId && document.querySelector('.page.active')?.id === 'page-paciente-detalhe') {
+      renderPacienteDetalhe(currentPacienteId);
+    }
+  });
+
+  renderBuilder();
+  renderEscalas();
+}
+
+function updateStats() {
+  $('stat-pacientes').textContent = cachedPacientes.length;
+  $('stat-escalas').textContent = ESCALAS_PADRAO.length + cachedEscalas.length;
+  $('stat-respostas').textContent = cachedRespostas.length;
+}
+
+function renderDashboard() {
+  const pl = $('dash-pacientes-list');
+  if (!cachedPacientes.length) { pl.innerHTML='<div class="empty-state"><div class="empty-state-icon">◉</div><div class="empty-state-text">Nenhum paciente ainda</div></div>'; }
+  else {
+    pl.innerHTML = cachedPacientes.slice(0,5).map(p=>`<div class="list-item" data-nav="paciente-detalhe" data-id="${p.id}"><div class="list-item-header"><span class="name" style="color:var(--text);font-weight:400">${p.nome}</span><span class="badge badge-green">ativo</span></div><div style="font-size:12px;color:var(--text3)">${fmtDate(p.criadoEm)}</div></div>`).join('');
+    pl.querySelectorAll('[data-nav]').forEach(el=>el.addEventListener('click',()=>navigate(el.dataset.nav,el.dataset.id)));
+  }
+  const rl = $('dash-respostas-list');
+  if (!cachedRespostas.length) { rl.innerHTML='<div class="empty-state"><div class="empty-state-icon">◌</div><div class="empty-state-text">Nenhuma resposta ainda</div></div>'; }
+  else {
+    rl.innerHTML = cachedRespostas.slice(0,5).map(r=>{
+      const pac=cachedPacientes.find(p=>p.id===r.pacienteId);
+      return `<div class="list-item" data-resp="${r.id}"><div class="list-item-header"><span class="name" style="color:var(--text);font-weight:400">${pac?pac.nome:'Desconhecido'}</span><span class="list-item-date">${fmtDate(r.criadoEm)}</span></div><div style="font-size:13px;color:var(--text2)">${r.escalaNome||'—'}</div>${r.pontuacao!=null?`<div style="margin-top:6px"><span class="badge badge-amber">Pontuação: ${r.pontuacao}</span></div>`:''}</div>`;
+    }).join('');
+    rl.querySelectorAll('[data-resp]').forEach(el=>el.addEventListener('click',()=>verResposta(el.dataset.resp)));
+  }
+}
+
+function renderPacientes() {
+  const tbody = $('pacientes-tbody');
+  if (!cachedPacientes.length) { tbody.innerHTML='<tr><td colspan="5"><div class="empty-state"><div class="empty-state-icon">◉</div><div class="empty-state-text">Nenhum paciente. Crie o primeiro!</div></div></td></tr>'; return; }
+  tbody.innerHTML = cachedPacientes.map(p=>{
+    const nResp=cachedRespostas.filter(r=>r.pacienteId===p.id).length;
+    return `<tr><td class="name">${p.nome}</td><td>${fmtDate(p.criadoEm)}</td><td>${nResp}</td><td><span class="badge badge-green">ativo</span></td><td><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm" data-nav="paciente-detalhe" data-id="${p.id}">Ver</button><button class="btn btn-danger btn-sm" data-del="${p.id}">✕</button></div></td></tr>`;
+  }).join('');
+  tbody.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.nav,b.dataset.id)));
+  tbody.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>excluirPaciente(b.dataset.del)));
+}
+
+async function criarPaciente() {
+  const nome = $('np-nome').value.trim();
+  if (!nome) { toast('Digite o nome do paciente'); return; }
+  await addDoc(collection(db,'pacientes'),{nome, obs:$('np-obs').value.trim(), criadoEm:serverTimestamp()});
+  closeModal('modal-novo-paciente');
+  $('np-nome').value=''; $('np-obs').value='';
+  toast('Paciente criado!');
+}
+
+async function excluirPaciente(id) {
+  if (!confirm('Excluir este paciente?')) return;
+  await deleteDoc(doc(db,'pacientes',id));
+  toast('Paciente excluído.');
+}
+
+function renderPacienteDetalhe(id) {
+  const pac = cachedPacientes.find(p=>p.id===id);
+  if (!pac) return;
+  $('detalhe-avatar').textContent = pac.nome[0].toUpperCase();
+  $('detalhe-nome').textContent = pac.nome;
+  $('detalhe-info').textContent = pac.obs || 'Sem observações';
+  const resps = cachedRespostas.filter(r=>r.pacienteId===id);
+  const ed = $('detalhe-respostas');
+  if (!resps.length) { ed.innerHTML='<div class="empty-state"><div class="empty-state-icon">◌</div><div class="empty-state-text">Nenhuma resposta ainda. Envie uma escala!</div></div>'; }
+  else {
+    ed.innerHTML = resps.map(r=>`<div class="list-item" data-resp="${r.id}"><div class="list-item-header"><span class="name" style="color:var(--text);font-weight:400">${r.escalaNome}</span><span class="list-item-date">${fmtDate(r.criadoEm)}</span></div>${r.pontuacao!=null?`<div style="margin-top:4px"><span class="badge badge-amber">Pontuação: ${r.pontuacao}</span></div>`:''}</div>`).join('');
+    ed.querySelectorAll('[data-resp]').forEach(el=>el.addEventListener('click',()=>verResposta(el.dataset.resp)));
+  }
+}
+
+function renderEscalas() {
+  const pg=$('escalas-padrao-grid');
+  pg.innerHTML=ESCALAS_PADRAO.map(e=>`<div class="scale-card"><div class="scale-card-title">${e.nome}</div><div class="scale-card-desc">${e.desc}</div><div class="scale-meta"><span class="badge badge-blue">${e.perguntas.length} itens</span><span class="badge badge-amber">padrão</span></div><div class="scale-actions"><button class="btn btn-ghost btn-sm" data-ver="${e.id}">Ver itens</button><button class="btn btn-accent btn-sm" data-enviar="${e.id}">Enviar</button></div></div>`).join('');
+  pg.querySelectorAll('[data-ver]').forEach(b=>b.addEventListener('click',()=>verEscalaPadrao(b.dataset.ver)));
+  pg.querySelectorAll('[data-enviar]').forEach(b=>b.addEventListener('click',()=>enviarEscalaDireta(b.dataset.enviar)));
+  $('escalas-custom-count').textContent=cachedEscalas.length;
+  const cg=$('escalas-custom-grid');
+  if (!cachedEscalas.length) { cg.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">◍</div><div class="empty-state-text">Nenhuma escala criada ainda</div></div>'; return; }
+  cg.innerHTML=cachedEscalas.map(e=>`<div class="scale-card"><div class="scale-card-title">${e.nome}</div><div class="scale-card-desc">${e.desc||'Sem descrição'}</div><div class="scale-meta"><span class="badge badge-blue">${(e.perguntas||[]).length} itens</span><span class="badge badge-green">personalizada</span></div><div class="scale-actions"><button class="btn btn-accent btn-sm" data-enviar="${e.id}">Enviar</button><button class="btn btn-danger btn-sm" data-del="${e.id}">Excluir</button></div></div>`).join('');
+  cg.querySelectorAll('[data-enviar]').forEach(b=>b.addEventListener('click',()=>enviarEscalaDireta(b.dataset.enviar)));
+  cg.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>excluirEscala(b.dataset.del)));
+}
+
+async function excluirEscala(id) {
+  if (!confirm('Excluir esta escala?')) return;
+  await deleteDoc(doc(db,'escalas',id));
+  toast('Escala excluída.');
+}
+
+function verEscalaPadrao(id) {
+  const e=ESCALAS_PADRAO.find(x=>x.id===id); if(!e) return;
+  $('modal-resposta-title').textContent=e.nome;
+  $('modal-resposta-content').innerHTML=`<p style="font-size:13px;color:var(--text2);margin-bottom:16px">${e.desc}</p>${e.perguntas.map((p,i)=>`<div class="resposta-section"><div class="resposta-label">Item ${i+1}</div><div class="resposta-value">${p.texto}</div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">${p.opcoes.map((o,oi)=>`<span class="badge badge-blue">${oi}. ${o}</span>`).join('')}</div></div>`).join('')}`;
+  openModal('modal-ver-resposta');
+}
+
+function adicionarPergunta() {
+  builderPerguntas.push({id:Date.now(),texto:'',tipo:'likert',opcoes:['','','','']});
+  renderBuilder();
+}
+
+function renderBuilder() {
+  const div=$('builder-questions');
+  if (!builderPerguntas.length) { div.innerHTML='<div style="text-align:center;padding:24px;color:var(--text3);font-size:13px">Nenhuma pergunta. Clique em "+ Adicionar pergunta".</div>'; return; }
+  div.innerHTML=builderPerguntas.map((q,i)=>`
+    <div class="question-item">
+      <div class="question-item-header"><span class="question-number">Pergunta ${i+1}</span><button class="btn btn-danger btn-sm" data-rem="${q.id}">Remover</button></div>
+      <div class="form-group" style="margin-bottom:10px"><input type="text" class="form-input" placeholder="Texto da pergunta" value="${q.texto}" data-txt="${q.id}"></div>
+      <div class="form-group" style="margin-bottom:10px">
+        <select class="form-select" data-tipo="${q.id}">
+          <option value="likert" ${q.tipo==='likert'?'selected':''}>Escala Likert</option>
+          <option value="multipla" ${q.tipo==='multipla'?'selected':''}>Múltipla escolha</option>
+          <option value="numero" ${q.tipo==='numero'?'selected':''}>Numérica (0–10)</option>
+          <option value="texto" ${q.tipo==='texto'?'selected':''}>Texto livre</option>
+        </select>
+      </div>
+      ${(q.tipo==='likert'||q.tipo==='multipla')?`<div><div style="font-size:11px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em">Opções</div>${q.opcoes.map((o,oi)=>`<div class="option-row"><span style="font-size:12px;color:var(--text3);width:20px;flex-shrink:0">${oi}.</span><input type="text" class="form-input" value="${o}" placeholder="Opção ${oi}" data-opt="${q.id}" data-oi="${oi}">${q.opcoes.length>2?`<button class="btn btn-danger btn-sm" data-remopt="${q.id}" data-oi="${oi}">✕</button>`:''}</div>`).join('')}<button class="add-option-btn" data-addopt="${q.id}">+ Adicionar opção</button></div>`:''}
+      ${q.tipo==='numero'?'<div style="font-size:12px;color:var(--text2);margin-top:4px">O paciente escolherá 0 a 10.</div>':''}
+      ${q.tipo==='texto'?'<div style="font-size:12px;color:var(--text2);margin-top:4px">O paciente escreverá livremente.</div>':''}
+    </div>`).join('');
+  div.querySelectorAll('[data-rem]').forEach(b=>b.addEventListener('click',()=>{builderPerguntas=builderPerguntas.filter(q=>q.id!=b.dataset.rem);renderBuilder();}));
+  div.querySelectorAll('[data-txt]').forEach(inp=>inp.addEventListener('change',()=>{const q=builderPerguntas.find(x=>x.id==inp.dataset.txt);if(q)q.texto=inp.value;}));
+  div.querySelectorAll('[data-tipo]').forEach(sel=>sel.addEventListener('change',()=>{const q=builderPerguntas.find(x=>x.id==sel.dataset.tipo);if(!q)return;q.tipo=sel.value;if(sel.value==='likert'||sel.value==='multipla')q.opcoes=['','','',''];renderBuilder();}));
+  div.querySelectorAll('[data-opt]').forEach(inp=>inp.addEventListener('change',()=>{const q=builderPerguntas.find(x=>x.id==inp.dataset.opt);if(q)q.opcoes[parseInt(inp.dataset.oi)]=inp.value;}));
+  div.querySelectorAll('[data-addopt]').forEach(b=>b.addEventListener('click',()=>{const q=builderPerguntas.find(x=>x.id==b.dataset.addopt);if(q){q.opcoes.push('');renderBuilder();}}));
+  div.querySelectorAll('[data-remopt]').forEach(b=>b.addEventListener('click',()=>{const q=builderPerguntas.find(x=>x.id==b.dataset.remopt);if(q&&q.opcoes.length>2){q.opcoes.splice(parseInt(b.dataset.oi),1);renderBuilder();}}));
+}
+
+async function salvarEscala() {
+  const nome=$('ne-nome').value.trim();
+  if (!nome){toast('Digite um nome');return;}
+  if (!builderPerguntas.length){toast('Adicione pelo menos uma pergunta');return;}
+  await addDoc(collection(db,'escalas'),{
+    nome, desc:$('ne-desc').value.trim(), instrucoes:$('ne-instrucoes').value.trim(), tipo:'custom',
+    perguntas:builderPerguntas.map(q=>({texto:q.texto,tipo:q.tipo,opcoes:q.opcoes.filter(o=>o.trim())})),
+    criadoEm:serverTimestamp()
+  });
+  builderPerguntas=[];
+  closeModal('modal-nova-escala');
+  $('ne-nome').value=''; $('ne-desc').value=''; $('ne-instrucoes').value='';
+  toast('Escala salva!');
+}
+
+function abrirEnviarEscala() {
+  const sel=$('enviar-escala-select');
+  sel.innerHTML=[...ESCALAS_PADRAO,...cachedEscalas].map(e=>`<option value="${e.id}">${e.nome}</option>`).join('');
+  $('escala-link-box').style.display='none';
+  $('btn-wpp-escala').style.display='none';
+  openModal('modal-enviar-escala');
+}
+
+function enviarEscalaDireta(id) { abrirEnviarEscala(); $('enviar-escala-select').value=id; }
+
+function gerarEscalaLink() {
+  const id=$('enviar-escala-select').value;
+  currentEscalaLinkUrl=`${PATIENT_BASE_URL}?escala=${id}${currentPacienteId?'&p='+currentPacienteId:''}`;
+  $('escala-link-text').textContent=currentEscalaLinkUrl;
+  $('escala-link-box').style.display='flex';
+  $('btn-wpp-escala').style.display='inline-flex';
+}
+
+function renderRespostas() {
+  const div=$('respostas-list');
+  if (!cachedRespostas.length){div.innerHTML='<div class="empty-state"><div class="empty-state-icon">◌</div><div class="empty-state-text">Nenhuma resposta ainda</div></div>';return;}
+  div.innerHTML=cachedRespostas.map(r=>{
+    const pac=cachedPacientes.find(p=>p.id===r.pacienteId);
+    return `<div class="list-item" data-resp="${r.id}"><div class="list-item-header"><span class="name" style="color:var(--text);font-weight:400">${pac?pac.nome:'Desconhecido'}</span><span class="list-item-date">${fmtDate(r.criadoEm)}</span></div><div style="font-size:13px;color:var(--text2)">${r.escalaNome||'—'}</div>${r.pontuacao!=null?`<div style="margin-top:6px"><span class="badge badge-amber">Pontuação: ${r.pontuacao}</span></div>`:''}</div>`;
+  }).join('');
+  div.querySelectorAll('[data-resp]').forEach(el=>el.addEventListener('click',()=>verResposta(el.dataset.resp)));
+}
+
+function verResposta(id) {
+  const r=cachedRespostas.find(x=>x.id===id); if(!r) return;
+  const escala=[...ESCALAS_PADRAO,...cachedEscalas].find(e=>e.id===r.escalaId);
+  $('modal-resposta-title').textContent=r.escalaNome||'Resposta';
+  $('modal-resposta-content').innerHTML=`${r.pontuacao!=null?`<div class="resposta-section"><div class="resposta-label">Pontuação total</div><div class="resposta-value" style="font-family:'Fraunces',serif;font-size:24px">${r.pontuacao}</div></div>`:''}${(r.respostas||[]).map((resp,i)=>`<div class="resposta-section"><div class="resposta-label">${escala?.perguntas[i]?.texto||'Pergunta '+(i+1)}</div><div class="resposta-value">${resp}</div></div>`).join('')}`;
+  openModal('modal-ver-resposta');
+}
+</script>
+</body>
+</html>
