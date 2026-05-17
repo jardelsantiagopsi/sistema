@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clínica Jardel Santiago · Questionário</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E◈%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#faf8f5;--surface:#ffffff;--border:#e8e2d9;--border2:#d4ccc0;--text:#2a2520;--text2:#6b6158;--text3:#a89e94;--accent:#7a5c3a;--accent2:#5a8a65;--accent3:#c4673a;--radius:14px;--radius-sm:8px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.7;}
+
+  /* LOADING */
+  #loading-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
+  .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .loading-text{font-size:14px;color:var(--text3);font-family:'DM Sans',sans-serif;}
+
+  /* ERRO */
+  #error-screen{min-height:100vh;display:none;align-items:center;justify-content:center;padding:24px;}
+  .error-box{max-width:440px;text-align:center;}
+  .error-icon{font-size:48px;margin-bottom:16px;opacity:.5;}
+  .error-title{font-family:'Fraunces',serif;font-size:22px;font-weight:300;color:var(--text);margin-bottom:8px;}
+  .error-sub{font-size:14px;color:var(--text2);line-height:1.6;}
+
+  /* SUCESSO */
+  #success-screen{min-height:100vh;display:none;align-items:center;justify-content:center;padding:24px;}
+  .success-box{max-width:440px;text-align:center;}
+  .success-icon{font-size:56px;margin-bottom:20px;}
+  .success-title{font-family:'Fraunces',serif;font-size:26px;font-weight:300;color:var(--text);margin-bottom:10px;}
+  .success-sub{font-size:15px;color:var(--text2);line-height:1.7;}
+
+  /* FORM */
+  #form-screen{display:none;min-height:100vh;padding-bottom:60px;}
+
+  .form-header{background:var(--surface);border-bottom:1px solid var(--border);padding:20px 24px;position:sticky;top:0;z-index:10;}
+  .form-header-inner{max-width:680px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;}
+  .form-brand{font-family:'Fraunces',serif;font-size:15px;font-weight:300;font-style:italic;color:var(--accent);}
+  .form-progress-wrap{display:flex;align-items:center;gap:10px;}
+  .form-progress-text{font-size:12px;color:var(--text3);}
+  .form-progress-bar{width:100px;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+  .form-progress-fill{height:100%;background:var(--accent2);border-radius:2px;transition:width .4s;}
+
+  .form-body{max-width:680px;margin:0 auto;padding:40px 24px;}
+
+  .form-intro{margin-bottom:40px;}
+  .form-escala-nome{font-family:'Fraunces',serif;font-size:28px;font-weight:300;color:var(--text);margin-bottom:10px;letter-spacing:.01em;}
+  .form-instrucoes{font-size:14px;color:var(--text2);line-height:1.7;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);}
+
+  /* PERGUNTA */
+  .pergunta-wrap{margin-bottom:36px;animation:fadeUp .3s ease;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .pergunta-num{font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:8px;}
+  .pergunta-texto{font-size:17px;color:var(--text);margin-bottom:20px;font-weight:400;line-height:1.5;}
+
+  /* LIKERT / MULTIPLA */
+  .opcoes-list{display:flex;flex-direction:column;gap:10px;}
+  .opcao-item{display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;}
+  .opcao-item:hover{border-color:var(--accent);background:#fdf9f5;}
+  .opcao-item.selected{border-color:var(--accent);background:#fdf5ed;}
+  .opcao-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;transition:all .15s;display:flex;align-items:center;justify-content:center;}
+  .opcao-item.selected .opcao-radio{border-color:var(--accent);background:var(--accent);}
+  .opcao-item.selected .opcao-radio::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff;}
+  .opcao-label{font-size:14px;color:var(--text);line-height:1.4;}
+  .opcao-num{font-size:11px;color:var(--text3);margin-right:4px;}
+
+  /* NUMÉRICA */
+  .numero-wrap{display:flex;flex-direction:column;gap:10px;}
+  .numero-scale{display:flex;gap:8px;flex-wrap:wrap;}
+  .numero-btn{width:48px;height:48px;border-radius:var(--radius-sm);border:1.5px solid var(--border);background:var(--surface);font-size:15px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;}
+  .numero-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .numero-btn.selected{border-color:var(--accent);background:var(--accent);color:#fff;}
+  .numero-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);}
+
+  /* TEXTO */
+  .texto-input{width:100%;padding:14px 16px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;resize:vertical;min-height:100px;transition:border-color .2s;line-height:1.6;}
+  .texto-input:focus{border-color:var(--accent);}
+
+  /* DIVIDER */
+  .pergunta-divider{height:1px;background:var(--border);margin:8px 0 36px;}
+
+  /* FOOTER */
+  .form-footer{max-width:680px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+  .btn-submit{padding:14px 32px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:opacity .2s;}
+  .btn-submit:hover{opacity:.9;}
+  .btn-submit:disabled{opacity:.5;cursor:not-allowed;}
+  .submit-note{font-size:12px;color:var(--text3);}
+
+  /* AVISO CAMPOS */
+  .aviso-campos{font-size:13px;color:var(--accent3);margin-top:12px;display:none;}
+</style>
+</head>
+<body>
+
+<div id="loading-screen">
+  <div class="spinner"></div>
+  <div class="loading-text">Carregando questionário...</div>
+</div>
+
+<div id="error-screen">
+  <div class="error-box">
+    <div class="error-icon">◎</div>
+    <div class="error-title">Link inválido ou expirado</div>
+    <div class="error-sub">Este link não é mais válido. Por favor, solicite um novo link ao seu psicólogo.</div>
+  </div>
+</div>
+
+<div id="success-screen">
+  <div class="success-box">
+    <div class="success-icon">✓</div>
+    <div class="success-title">Respostas enviadas!</div>
+    <div class="success-sub">Obrigado por responder. Suas respostas foram recebidas com segurança pelo seu psicólogo.<br><br>Você já pode fechar esta página.</div>
+  </div>
+</div>
+
+<div id="form-screen">
+  <div class="form-header">
+    <div class="form-header-inner">
+      <div class="form-brand">Clínica Jardel Santiago</div>
+      <div class="form-progress-wrap">
+        <div class="form-progress-text" id="progress-text">0 / 0</div>
+        <div class="form-progress-bar"><div class="form-progress-fill" id="progress-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-body">
+    <div class="form-intro">
+      <div class="form-escala-nome" id="escala-nome">—</div>
+      <div class="form-instrucoes" id="escala-instrucoes" style="display:none"></div>
+    </div>
+    <div id="perguntas-container"></div>
+    <div class="form-footer">
+      <div>
+        <button class="btn-submit" id="btn-submit">Enviar respostas</button>
+        <div class="aviso-campos" id="aviso-campos">Por favor, responda todas as perguntas antes de enviar.</div>
+      </div>
+      <div class="submit-note">Suas respostas são enviadas com segurança diretamente ao seu psicólogo.</div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, doc, getDoc, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAkUJSOjmGrd4YOiillnxC32QZzcekJn3o",
+  authDomain: "sistema-jardel-santiago.firebaseapp.com",
+  projectId: "sistema-jardel-santiago",
+  storageBucket: "sistema-jardel-santiago.firebasestorage.app",
+  messagingSenderId: "1003400669772",
+  appId: "1:1003400669772:web:7e210003ef907337bc62e9"
+};
+
+const ESCALAS_PADRAO = [
+  { id:'phq9', nome:'PHQ-9', desc:'Rastreio de depressão', instrucoes:'Durante as últimas 2 semanas, com que frequência você foi incomodado(a) por algum dos problemas a seguir?',
+    perguntas:[
+      {texto:'Pouco interesse ou prazer em fazer as coisas',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Se sentir "pra baixo", deprimido(a) ou sem perspectiva',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Dificuldade para adormecer ou permanecer dormindo, ou dormir mais do que de costume',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Se sentir cansado(a) ou com pouca energia',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Falta de apetite ou comer demais',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Se sentir mal consigo mesmo(a), ou achar que é um fracasso ou que decepcionou sua família',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Dificuldade para se concentrar nas coisas, como ler um jornal ou ver televisão',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Lentidão para se movimentar ou falar, ou ao contrário, estar tão agitado(a) que você fica andando de um lado para o outro',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Pensamentos de que seria melhor estar morto(a) ou de se machucar de alguma forma',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+    ]},
+  { id:'gad7', nome:'GAD-7', desc:'Rastreio de ansiedade', instrucoes:'Durante as últimas 2 semanas, com que frequência você foi incomodado(a) pelos problemas a seguir?',
+    perguntas:[
+      {texto:'Se sentir nervoso(a), ansioso(a) ou no limite',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Não conseguir parar ou controlar as preocupações',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Se preocupar muito com diversas coisas',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Dificuldade para relaxar',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Ficar tão agitado(a) que é difícil ficar parado(a)',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Ficar facilmente aborrecido(a) ou irritado(a)',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+      {texto:'Sentir medo como se algo horrível fosse acontecer',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
+    ]},
+  { id:'bdi', nome:'BDI-II (resumido)', desc:'Inventário de Depressão de Beck', instrucoes:'Este questionário consiste em grupos de afirmações. Leia cada grupo com atenção e escolha a afirmação que melhor descreve como você tem se sentido.',
+    perguntas:[
+      {texto:'Tristeza',tipo:'multipla',opcoes:['Não me sinto triste','Me sinto triste grande parte do tempo','Estou sempre triste','Estou tão triste que não consigo suportar']},
+      {texto:'Pessimismo',tipo:'multipla',opcoes:['Não estou desanimado com meu futuro','Estou mais desanimado do que de costume','Não espero que as coisas deem certo','Sinto que meu futuro não tem esperança']},
+      {texto:'Fracasso',tipo:'multipla',opcoes:['Não me sinto um fracasso','Fracassei mais do que devia','Vejo muitos fracassos em minha vida','Sou um fracasso completo como pessoa']},
+      {texto:'Perda de prazer',tipo:'multipla',opcoes:['Tenho o mesmo prazer nas coisas que antes','Não tenho tanto prazer nas coisas como antes','Tenho muito pouco prazer nas coisas','Não consigo ter nenhum prazer nas coisas']},
+    ]},
+];
+
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+
+const params = new URLSearchParams(window.location.search);
+const escalaId = params.get('escala');
+const pacienteId = params.get('p');
+
+const $ = id => document.getElementById(id);
+let escala = null;
+let respostas = {};
+
+function showScreen(id) {
+  ['loading-screen','error-screen','success-screen','form-screen'].forEach(s => {
+    const el = $(s);
+    el.style.display = s === id ? (s === 'error-screen' || s === 'success-screen' ? 'flex' : 'block') : 'none';
+  });
+}
+
+async function init() {
+  if (!escalaId) { showScreen('error-screen'); return; }
+
+  // Buscar escala (padrão ou custom)
+  const padrao = ESCALAS_PADRAO.find(e => e.id === escalaId);
+  if (padrao) {
+    escala = padrao;
+  } else {
+    try {
+      const snap = await getDoc(doc(db, 'escalas', escalaId));
+      if (!snap.exists()) { showScreen('error-screen'); return; }
+      escala = { id: snap.id, ...snap.data() };
+    } catch(e) { showScreen('error-screen'); return; }
+  }
+
+  renderForm();
+  showScreen('form-screen');
+}
+
+function renderForm() {
+  $('escala-nome').textContent = escala.nome;
+  if (escala.instrucoes) {
+    $('escala-instrucoes').textContent = escala.instrucoes;
+    $('escala-instrucoes').style.display = 'block';
+  }
+
+  const container = $('perguntas-container');
+  container.innerHTML = escala.perguntas.map((p, i) => renderPergunta(p, i)).join('');
+
+  // Event listeners
+  container.querySelectorAll('.opcao-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const qi = parseInt(el.dataset.qi);
+      const val = el.dataset.val;
+      respostas[qi] = val;
+      container.querySelectorAll(`.opcao-item[data-qi="${qi}"]`).forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      atualizarProgresso();
+    });
+  });
+
+  container.querySelectorAll('.numero-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const qi = parseInt(btn.dataset.qi);
+      const val = btn.dataset.val;
+      respostas[qi] = val;
+      container.querySelectorAll(`.numero-btn[data-qi="${qi}"]`).forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      atualizarProgresso();
+    });
+  });
+
+  container.querySelectorAll('.texto-input').forEach(inp => {
+    inp.addEventListener('input', () => {
+      respostas[parseInt(inp.dataset.qi)] = inp.value;
+      atualizarProgresso();
+    });
+  });
+
+  $('btn-submit').addEventListener('click', enviar);
+  atualizarProgresso();
+}
+
+function renderPergunta(p, i) {
+  let controle = '';
+
+  if (p.tipo === 'likert' || p.tipo === 'multipla') {
+    controle = `<div class="opcoes-list">
+      ${p.opcoes.map((o, oi) => `
+        <div class="opcao-item" data-qi="${i}" data-val="${oi}">
+          <div class="opcao-radio"></div>
+          <div class="opcao-label"><span class="opcao-num">${oi}.</span> ${o}</div>
+        </div>`).join('')}
+    </div>`;
+  } else if (p.tipo === 'numero') {
+    controle = `<div class="numero-wrap">
+      <div class="numero-scale">
+        ${[0,1,2,3,4,5,6,7,8,9,10].map(n => `<button class="numero-btn" data-qi="${i}" data-val="${n}">${n}</button>`).join('')}
+      </div>
+      <div class="numero-labels"><span>Nenhum</span><span>Máximo</span></div>
+    </div>`;
+  } else if (p.tipo === 'texto') {
+    controle = `<textarea class="texto-input" data-qi="${i}" placeholder="Escreva sua resposta aqui..."></textarea>`;
+  }
+
+  return `
+    <div class="pergunta-wrap">
+      <div class="pergunta-num">Pergunta ${i + 1} de ${escala.perguntas.length}</div>
+      <div class="pergunta-texto">${p.texto}</div>
+      ${controle}
+    </div>
+    ${i < escala.perguntas.length - 1 ? '<div class="pergunta-divider"></div>' : ''}`;
+}
+
+function atualizarProgresso() {
+  const total = escala.perguntas.length;
+  const respondidas = Object.keys(respostas).filter(k => respostas[k] !== '' && respostas[k] != null).length;
+  $('progress-text').textContent = `${respondidas} / ${total}`;
+  $('progress-fill').style.width = `${(respondidas / total) * 100}%`;
+}
+
+async function enviar() {
+  const total = escala.perguntas.length;
+  const respondidas = escala.perguntas.map((p, i) => {
+    if (p.tipo === 'texto') return respostas[i] && respostas[i].trim() !== '';
+    return respostas[i] != null && respostas[i] !== '';
+  });
+
+  if (!respondidas.every(Boolean)) {
+    $('aviso-campos').style.display = 'block';
+    return;
+  }
+
+  $('aviso-campos').style.display = 'none';
+  $('btn-submit').disabled = true;
+  $('btn-submit').textContent = 'Enviando...';
+
+  // Calcular pontuação (para escalas Likert/múltipla numéricas)
+  let pontuacao = null;
+  const todasNumericas = escala.perguntas.every(p => p.tipo === 'likert' || p.tipo === 'multipla' || p.tipo === 'numero');
+  if (todasNumericas) {
+    pontuacao = escala.perguntas.reduce((sum, p, i) => sum + parseInt(respostas[i] || 0), 0);
+  }
+
+  const listaRespostas = escala.perguntas.map((p, i) => {
+    if (p.tipo === 'likert' || p.tipo === 'multipla') {
+      return p.opcoes[parseInt(respostas[i])];
+    }
+    return respostas[i];
+  });
+
+  try {
+    await addDoc(collection(db, 'respostas'), {
+      escalaId: escala.id,
+      escalaNome: escala.nome,
+      pacienteId: pacienteId || null,
+      respostas: listaRespostas,
+      pontuacao,
+      criadoEm: serverTimestamp()
+    });
+    showScreen('success-screen');
+  } catch(e) {
+    $('btn-submit').disabled = false;
+    $('btn-submit').textContent = 'Enviar respostas';
+    alert('Erro ao enviar. Verifique sua conexão e tente novamente.');
+  }
+}
+
+init();
+</script>
+</body>
+</html>
