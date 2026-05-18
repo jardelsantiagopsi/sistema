@@ -489,12 +489,32 @@ function getSaudacao() {
   return 'Boa noite';
 }
 
+async function pedirPermissaoNotificacao() {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'default') {
+    await Notification.requestPermission();
+  }
+}
+
+function notificarNovaResposta(nomePaciente, nomeEscala) {
+  if (Notification.permission !== 'granted') return;
+  const n = new Notification('Nova resposta recebida 📋', {
+    body: `${nomePaciente} respondeu ${nomeEscala}`,
+    icon: '/sistema/icon-192.png',
+    badge: '/sistema/icon-192.png',
+    tag: 'nova-resposta',
+    renotify: true,
+  });
+  n.onclick = () => { window.focus(); n.close(); };
+}
+
 onAuthStateChanged(auth, user => {
   if (user) {
     $('auth-screen').style.display = 'none';
     $('app').style.display = 'block';
     $('user-display').textContent = user.email;
     $('dash-greeting').textContent = `${getSaudacao()}, Jardel.`;
+    pedirPermissaoNotificacao();
     initAll();
   } else {
     $('auth-screen').style.display = 'flex';
@@ -568,12 +588,25 @@ function initAll() {
     cachedEscalas = snap.docs.map(d=>({id:d.id,...d.data(),tipo:'custom',categoria:'personalizada'}));
     renderEscalas(); updateStats();
   });
+  let respostasCarregadas = false;
   onSnapshot(collection(db,'respostas'), snap => {
     cachedRespostas = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0));
     renderRespostas(); renderDashboard(); updateStats();
     if (currentPacienteId && document.querySelector('.page.active')?.id === 'page-paciente-detalhe') {
       renderPacienteDetalhe(currentPacienteId);
     }
+    if (respostasCarregadas) {
+      snap.docChanges().forEach(change => {
+        if (change.type === 'added') {
+          const r = change.doc.data();
+          const paciente = cachedPacientes.find(p => p.id === r.pacienteId);
+          const nomePaciente = paciente?.nome ?? 'Paciente';
+          const escala = r.escalaNome ?? r.escalaId ?? 'escala';
+          notificarNovaResposta(nomePaciente, escala);
+        }
+      });
+    }
+    respostasCarregadas = true;
   });
 
   renderBuilder();

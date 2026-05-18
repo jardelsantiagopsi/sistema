@@ -19,6 +19,17 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+      const app = list.find(c => c.url.includes('index.html') || c.url.includes('/sistema'));
+      if (app) return app.focus();
+      return clients.openWindow('/sistema/index.html');
+    })
+  );
+});
+
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   e.respondWith(
