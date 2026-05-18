@@ -7,15 +7,15 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E◈%3C/text%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#0f0e0d;--surface:#1a1815;--surface2:#232018;--border:#2e2a24;--border2:#3d3830;--text:#e8e0d4;--text2:#9a9080;--text3:#5a5248;--accent:#c4a882;--accent2:#8fbe9a;--accent3:#e07b6a;--accent4:#7a9ec4;--gold:#d4aa70;--radius:12px;--radius-sm:8px;}
+  :root{--bg:#0f0e0d;--surface:#1a1815;--surface2:#232018;--surface3:#2a2620;--border:#2e2a24;--border2:#3d3830;--text:#e8e0d4;--text2:#9a9080;--text3:#5a5248;--accent:#c4a882;--accent2:#8fbe9a;--accent3:#e07b6a;--accent4:#7a9ec4;--gold:#d4aa70;--radius:12px;--radius-sm:8px;}
   *{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6;}
-  ::-webkit-scrollbar{width:4px;} ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+  ::-webkit-scrollbar{width:6px;height:6px;} ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;} ::-webkit-scrollbar-track{background:transparent;}
   #auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 30% 20%,#1e1a14 0%,#0f0e0d 70%);}
   .auth-box{width:400px;padding:52px 44px;background:var(--surface);border:1px solid var(--border);border-radius:20px;text-align:center;}
-  .auth-mark{font-family:'Fraunces',serif;font-size:30px;font-weight:300;font-style:italic;color:var(--accent);margin-bottom:6px;letter-spacing:0.02em;}
-  .auth-title{font-family:'Fraunces',serif;font-size:22px;font-weight:300;color:var(--text);margin-bottom:4px;letter-spacing:0.01em;}
-  .auth-sub{font-size:12px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:40px;}
+  .auth-mark{font-family:'Fraunces',serif;font-size:30px;font-weight:300;font-style:italic;color:var(--accent);margin-bottom:6px;letter-spacing:.02em;}
+  .auth-title{font-family:'Fraunces',serif;font-size:22px;font-weight:300;color:var(--text);margin-bottom:4px;}
+  .auth-sub{font-size:12px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:40px;}
   .field-group{margin-bottom:16px;text-align:left;}
   .field-label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text2);margin-bottom:6px;display:block;}
   .field-input{width:100%;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .2s;}
@@ -41,8 +41,8 @@
   .btn-logout:hover{color:var(--accent3);}
   .main{margin-left:230px;padding:32px 36px;min-height:100vh;}
   .page{display:none;} .page.active{display:block;}
-  .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;gap:16px;}
-  .page-title{font-family:'Fraunces',serif;font-size:26px;font-weight:300;color:var(--text);margin-bottom:4px;letter-spacing:0.01em;}
+  .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
+  .page-title{font-family:'Fraunces',serif;font-size:26px;font-weight:300;color:var(--text);margin-bottom:4px;letter-spacing:.01em;}
   .page-sub{font-size:13px;color:var(--text2);}
   .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px;}
   .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
@@ -51,6 +51,7 @@
   .stat-sub{font-size:12px;color:var(--text2);margin-top:4px;}
   .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;}
   .card-title{font-family:'Fraunces',serif;font-size:16px;font-weight:400;color:var(--text);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .card-subtitle{font-size:12px;color:var(--text3);font-family:'DM Sans',sans-serif;font-weight:400;text-transform:none;letter-spacing:0;}
   .table{width:100%;border-collapse:collapse;}
   .table th{text-align:left;padding:10px 12px;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border);}
   .table td{padding:14px 12px;border-bottom:1px solid var(--border);font-size:13.5px;color:var(--text2);vertical-align:middle;}
@@ -58,7 +59,8 @@
   .table .name{color:var(--text);font-weight:400;}
   .badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;}
   .badge-green{background:rgba(143,190,154,.12);color:var(--accent2);}
-  .badge-amber{background:rgba(196,168,130,.12);color:var(--accent);}
+  .badge-amber{background:rgba(196,168,130,.18);color:var(--accent);}
+  .badge-red{background:rgba(224,123,106,.15);color:var(--accent3);}
   .badge-blue{background:rgba(122,158,196,.12);color:var(--accent4);}
   .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;border:none;}
   .btn-sm{padding:5px 12px;font-size:12px;}
@@ -84,11 +86,18 @@
   .back-btn:hover{color:var(--text);}
   .patient-header{display:flex;align-items:center;gap:16px;margin-bottom:28px;flex-wrap:wrap;}
   .patient-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--gold));display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:22px;color:#1a1208;font-weight:300;flex-shrink:0;}
-  .scales-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
-  .scale-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:border-color .2s;}
+
+  /* CATEGORIA DE ESCALAS */
+  .categoria-section{margin-bottom:28px;}
+  .categoria-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+  .categoria-title{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-size:16px;font-weight:400;color:var(--text);}
+  .categoria-icon{color:var(--accent);font-size:18px;}
+  .categoria-count{font-size:11px;color:var(--text3);font-family:'DM Sans',sans-serif;}
+  .scales-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+  .scale-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:border-color .2s;}
   .scale-card:hover{border-color:var(--border2);}
   .scale-card-title{font-family:'Fraunces',serif;font-size:15px;font-weight:400;color:var(--text);margin-bottom:6px;}
-  .scale-card-desc{font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.5;}
+  .scale-card-desc{font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.5;min-height:36px;}
   .scale-meta{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
   .scale-actions{display:flex;gap:8px;flex-wrap:wrap;}
   .question-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-bottom:12px;}
@@ -98,7 +107,7 @@
   .add-option-btn{font-size:12px;color:var(--accent);cursor:pointer;background:none;border:none;padding:4px 0;margin-top:4px;}
   .list-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-bottom:10px;cursor:pointer;transition:border-color .2s;}
   .list-item:hover{border-color:var(--border2);}
-  .list-item-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .list-item-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:10px;}
   .list-item-date{font-size:12px;color:var(--text3);}
   .toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:12px 18px;font-size:13px;color:var(--text);z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s;}
   .toast.show{transform:translateY(0);opacity:1;}
@@ -110,6 +119,41 @@
   .resposta-section{margin-bottom:20px;}
   .resposta-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:6px;}
   .resposta-value{font-size:14px;color:var(--text);line-height:1.6;}
+
+  /* INSIGHTS */
+  .insight-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;margin-bottom:14px;border-left:3px solid var(--accent);}
+  .insight-card.green{border-left-color:var(--accent2);}
+  .insight-card.amber{border-left-color:var(--accent);}
+  .insight-card.red{border-left-color:var(--accent3);}
+  .insight-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:10px;flex-wrap:wrap;}
+  .insight-name{font-family:'Fraunces',serif;font-size:15px;color:var(--text);}
+  .insight-nivel{font-size:13px;color:var(--text);font-weight:500;margin-top:4px;}
+  .insight-pontuacao{font-size:12px;color:var(--text2);margin-top:2px;}
+  .insight-alerta{margin-top:10px;padding:10px 12px;background:rgba(224,123,106,.1);border:1px solid rgba(224,123,106,.25);border-radius:var(--radius-sm);color:var(--accent3);font-size:12.5px;display:flex;gap:8px;align-items:flex-start;}
+  .insight-subscores{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--text2);}
+  .insight-subscores strong{color:var(--text);font-weight:500;}
+
+  /* GRÁFICO */
+  .chart-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px;}
+  .chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px;}
+  .chart-title{font-family:'Fraunces',serif;font-size:15px;color:var(--text);}
+  .chart-meta{font-size:11px;color:var(--text3);}
+  .chart-svg{width:100%;height:160px;}
+  .chart-line{fill:none;stroke:var(--accent);stroke-width:2;}
+  .chart-area{fill:url(#chartGrad);opacity:.5;}
+  .chart-dot{fill:var(--accent);stroke:var(--surface2);stroke-width:2;cursor:pointer;}
+  .chart-dot:hover{r:6;fill:var(--gold);}
+  .chart-grid-line{stroke:var(--border);stroke-width:.5;stroke-dasharray:2 4;}
+  .chart-label{fill:var(--text3);font-size:10px;font-family:'DM Sans',sans-serif;}
+  .chart-tooltip{position:absolute;background:var(--surface3);border:1px solid var(--border2);border-radius:6px;padding:6px 10px;font-size:11px;color:var(--text);pointer-events:none;opacity:0;transition:opacity .15s;white-space:nowrap;z-index:50;}
+  .chart-tooltip.show{opacity:1;}
+
+  /* CATEGORIA FILTRO */
+  .categoria-filtros{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
+  .categoria-filtro{padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
+  .categoria-filtro:hover{border-color:var(--border2);color:var(--text);}
+  .categoria-filtro.active{background:rgba(196,168,130,.15);border-color:var(--accent);color:var(--accent);}
+
   @media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr);}.grid-2{grid-template-columns:1fr;}.sidebar{width:200px;}.main{margin-left:200px;padding:24px 20px;}}
 </style>
 </head>
@@ -139,7 +183,7 @@
       <div class="nav-section-label">Atendimento</div>
       <button class="nav-item" data-page="pacientes"><span class="nav-icon">◉</span> Pacientes</button>
       <div class="nav-section-label">Avaliação</div>
-      <button class="nav-item" data-page="escalas"><span class="nav-icon">◍</span> Escalas & Questionários</button>
+      <button class="nav-item" data-page="escalas"><span class="nav-icon">◍</span> Biblioteca de Escalas</button>
       <button class="nav-item" data-page="respostas"><span class="nav-icon">◌</span> Respostas</button>
     </nav>
     <div class="sidebar-footer">
@@ -154,12 +198,12 @@
   <main class="main">
     <div class="page active" id="page-dashboard">
       <div class="page-header">
-        <div><div class="page-title" id="dash-greeting">Bem-vindo, Jardel.</div><div class="page-sub">Resumo da sua clínica</div></div>
+        <div><div class="page-title" id="dash-greeting">Bem-vindo</div><div class="page-sub">Resumo da sua clínica</div></div>
         <button class="btn btn-accent" id="btn-novo-paciente-dash">+ Novo paciente</button>
       </div>
       <div class="stats-grid">
         <div class="stat-card"><div class="stat-label">Pacientes ativos</div><div class="stat-value" id="stat-pacientes">0</div><div class="stat-sub">cadastrados</div></div>
-        <div class="stat-card"><div class="stat-label">Escalas</div><div class="stat-value" id="stat-escalas">0</div><div class="stat-sub">padrão + personalizadas</div></div>
+        <div class="stat-card"><div class="stat-label">Escalas disponíveis</div><div class="stat-value" id="stat-escalas">0</div><div class="stat-sub">na biblioteca</div></div>
         <div class="stat-card"><div class="stat-label">Respostas</div><div class="stat-value" id="stat-respostas">0</div><div class="stat-sub">recebidas</div></div>
       </div>
       <div class="grid-2">
@@ -190,25 +234,31 @@
           <button class="btn btn-accent btn-sm" id="btn-enviar-escala-detalhe">📋 Enviar escala</button>
         </div>
       </div>
+
       <div class="card">
-        <div class="card-title">Histórico de respostas</div>
+        <div class="card-title">Insights clínicos <span class="card-subtitle">interpretação da resposta mais recente</span></div>
+        <div id="detalhe-insights"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Evolução <span class="card-subtitle">gráfico por escala ao longo do tempo</span></div>
+        <div id="detalhe-graficos"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Histórico completo de respostas</div>
         <div id="detalhe-respostas"></div>
       </div>
     </div>
 
     <div class="page" id="page-escalas">
       <div class="page-header">
-        <div><div class="page-title">Escalas & Questionários</div><div class="page-sub">Instrumentos padrão e personalizados</div></div>
-        <button class="btn btn-accent" id="btn-nova-escala">+ Nova escala</button>
+        <div><div class="page-title">Biblioteca de Escalas</div><div class="page-sub">Instrumentos validados organizados por categoria</div></div>
+        <button class="btn btn-accent" id="btn-nova-escala">+ Nova escala personalizada</button>
       </div>
-      <div class="card">
-        <div class="card-title">Escalas padrão (incluídas)</div>
-        <div class="scales-grid" id="escalas-padrao-grid"></div>
-      </div>
-      <div class="card">
-        <div class="card-title">Minhas escalas personalizadas <span id="escalas-custom-count" class="badge badge-amber">0</span></div>
-        <div class="scales-grid" id="escalas-custom-grid"></div>
-      </div>
+
+      <div class="categoria-filtros" id="categoria-filtros"></div>
+      <div id="escalas-conteudo"></div>
     </div>
 
     <div class="page" id="page-respostas">
@@ -233,7 +283,8 @@
 <div class="modal-overlay" id="modal-enviar-escala">
   <div class="modal">
     <div class="modal-title">Enviar Escala</div>
-    <div class="form-group"><label class="form-label">Selecionar escala</label><select class="form-select" id="enviar-escala-select"></select></div>
+    <div class="form-group"><label class="form-label">Categoria</label><select class="form-select" id="enviar-categoria-select"></select></div>
+    <div class="form-group"><label class="form-label">Escala</label><select class="form-select" id="enviar-escala-select"></select></div>
     <div class="link-box" id="escala-link-box" style="display:none"><div class="link-text" id="escala-link-text">—</div><button class="btn btn-ghost btn-sm" id="btn-copiar-escala-link">Copiar</button></div>
     <div class="modal-footer">
       <button class="btn btn-ghost" data-close="modal-enviar-escala">Fechar</button>
@@ -269,14 +320,13 @@
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { ESCALAS, CATEGORIAS, escalasPorCategoria, getEscalaById } from './escalas.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAkUJSOjmGrd4YOiillnxC32QZzcekJn3o",
@@ -299,38 +349,7 @@ let builderPerguntas = [];
 let cachedPacientes = [];
 let cachedEscalas = [];
 let cachedRespostas = [];
-
-const ESCALAS_PADRAO = [
-  { id:'phq9', nome:'PHQ-9', tipo:'padrao', desc:'Rastreio de depressão — 9 itens. Pontuação 0–27.',
-    perguntas:[
-      {texto:'Pouco interesse ou prazer em fazer as coisas',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
-      {texto:'Se sentir "pra baixo", deprimido(a) ou sem perspectiva',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
-      {texto:'Dificuldade para adormecer ou permanecer dormindo',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
-      {texto:'Se sentir cansado(a) ou com pouca energia',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
-      {texto:'Falta de apetite ou comer demais',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
-      {texto:'Se sentir mal consigo mesmo(a)',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
-      {texto:'Dificuldade para se concentrar',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
-      {texto:'Lentidão para se movimentar ou falar, ou agitação',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
-      {texto:'Pensamentos de que seria melhor estar morto(a)',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
-    ]},
-  { id:'gad7', nome:'GAD-7', tipo:'padrao', desc:'Rastreio de ansiedade generalizada — 7 itens.',
-    perguntas:[
-      {texto:'Se sentir nervoso(a), ansioso(a) ou no limite',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
-      {texto:'Não conseguir parar ou controlar as preocupações',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
-      {texto:'Se preocupar muito com diversas coisas',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
-      {texto:'Dificuldade para relaxar',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
-      {texto:'Ficar tão agitado(a) que é difícil ficar parado(a)',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
-      {texto:'Ficar facilmente aborrecido(a) ou irritado(a)',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
-      {texto:'Sentir medo como se algo horrível fosse acontecer',tipo:'likert',opcoes:['Nenhuma vez','Vários dias','Mais da metade dos dias','Quase todos os dias']},
-    ]},
-  { id:'bdi', nome:'BDI-II (resumido)', tipo:'padrao', desc:'Inventário de Depressão de Beck — versão resumida.',
-    perguntas:[
-      {texto:'Tristeza',tipo:'multipla',opcoes:['Não me sinto triste','Me sinto triste grande parte do tempo','Estou sempre triste','Estou tão triste que não consigo suportar']},
-      {texto:'Pessimismo',tipo:'multipla',opcoes:['Não estou desanimado com meu futuro','Estou mais desanimado do que de costume','Não espero que as coisas deem certo','Meu futuro não tem esperança']},
-      {texto:'Fracasso',tipo:'multipla',opcoes:['Não me sinto um fracasso','Fracassei mais do que devia','Vejo muitos fracassos em minha vida','Sou um fracasso completo']},
-      {texto:'Perda de prazer',tipo:'multipla',opcoes:['Tenho o mesmo prazer nas coisas','Não tenho tanto prazer como antes','Tenho muito pouco prazer','Não consigo ter nenhum prazer']},
-    ]},
-];
+let filtroCategoria = 'todas';
 
 const $ = id => document.getElementById(id);
 function fmtDate(ts) {
@@ -338,8 +357,15 @@ function fmtDate(ts) {
   const d = ts.toDate ? ts.toDate() : new Date(ts);
   return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
 }
+function fmtDateShort(ts) {
+  if (!ts) return '';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+}
 function toast(msg) {
-  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  let t = $('toast');
+  if (!t) { t = document.createElement('div'); t.id='toast'; t.className='toast'; document.body.appendChild(t); }
+  t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2800);
 }
 function openModal(id) { $(id).classList.add('open'); }
@@ -402,12 +428,14 @@ function initAll() {
   $('btn-copiar-escala-link').addEventListener('click', () => navigator.clipboard.writeText(currentEscalaLinkUrl).then(() => toast('Link copiado!')));
   $('btn-wpp-escala').addEventListener('click', () => window.open(`https://wa.me/?text=${encodeURIComponent('Olá! Por favor responda este questionário:\n'+currentEscalaLinkUrl)}`,'_blank'));
 
+  $('enviar-categoria-select').addEventListener('change', popularEscalasDoSelect);
+
   onSnapshot(collection(db,'pacientes'), snap => {
     cachedPacientes = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0));
     renderPacientes(); renderDashboard(); updateStats();
   });
   onSnapshot(collection(db,'escalas'), snap => {
-    cachedEscalas = snap.docs.map(d=>({id:d.id,...d.data()}));
+    cachedEscalas = snap.docs.map(d=>({id:d.id,...d.data(),tipo:'custom',categoria:'personalizada'}));
     renderEscalas(); updateStats();
   });
   onSnapshot(collection(db,'respostas'), snap => {
@@ -424,7 +452,7 @@ function initAll() {
 
 function updateStats() {
   $('stat-pacientes').textContent = cachedPacientes.length;
-  $('stat-escalas').textContent = ESCALAS_PADRAO.length + cachedEscalas.length;
+  $('stat-escalas').textContent = ESCALAS.length + cachedEscalas.length;
   $('stat-respostas').textContent = cachedRespostas.length;
 }
 
@@ -440,7 +468,9 @@ function renderDashboard() {
   else {
     rl.innerHTML = cachedRespostas.slice(0,5).map(r=>{
       const pac=cachedPacientes.find(p=>p.id===r.pacienteId);
-      return `<div class="list-item" data-resp="${r.id}"><div class="list-item-header"><span class="name" style="color:var(--text);font-weight:400">${pac?pac.nome:'Desconhecido'}</span><span class="list-item-date">${fmtDate(r.criadoEm)}</span></div><div style="font-size:13px;color:var(--text2)">${r.escalaNome||'—'}</div>${r.pontuacao!=null?`<div style="margin-top:6px"><span class="badge badge-amber">Pontuação: ${r.pontuacao}</span></div>`:''}</div>`;
+      const insight = obterInsight(r);
+      const corBadge = insight ? `badge-${insight.cor}` : 'badge-amber';
+      return `<div class="list-item" data-resp="${r.id}"><div class="list-item-header"><span class="name" style="color:var(--text);font-weight:400">${pac?pac.nome:'Anônimo'}</span><span class="list-item-date">${fmtDate(r.criadoEm)}</span></div><div style="font-size:13px;color:var(--text2)">${r.escalaNome||'—'}</div>${insight?`<div style="margin-top:6px"><span class="badge ${corBadge}">${insight.nivel}</span></div>`:''}</div>`;
     }).join('');
     rl.querySelectorAll('[data-resp]').forEach(el=>el.addEventListener('click',()=>verResposta(el.dataset.resp)));
   }
@@ -472,32 +502,218 @@ async function excluirPaciente(id) {
   toast('Paciente excluído.');
 }
 
+// ════ INTERPRETAÇÃO/INSIGHTS ════
+function obterInsight(resposta) {
+  const escala = ESCALAS.find(e => e.id === resposta.escalaId);
+  if (!escala || !escala.interpretar) return null;
+  const numericas = resposta.respostasNumericas || [];
+  const pontos = resposta.pontuacao;
+  if (pontos == null) return null;
+  try { return escala.interpretar(numericas, pontos, escala); }
+  catch(e) { console.error('Erro interpretação:', e); return null; }
+}
+
 function renderPacienteDetalhe(id) {
   const pac = cachedPacientes.find(p=>p.id===id);
   if (!pac) return;
   $('detalhe-avatar').textContent = pac.nome[0].toUpperCase();
   $('detalhe-nome').textContent = pac.nome;
   $('detalhe-info').textContent = pac.obs || 'Sem observações';
+
   const resps = cachedRespostas.filter(r=>r.pacienteId===id);
+
+  // ── INSIGHTS (resposta mais recente de cada escala) ──
+  const insightsDiv = $('detalhe-insights');
+  if (!resps.length) {
+    insightsDiv.innerHTML = '<div class="empty-state"><div class="empty-state-icon">◌</div><div class="empty-state-text">Nenhuma resposta ainda. Envie uma escala!</div></div>';
+  } else {
+    const maisRecentePorEscala = {};
+    resps.forEach(r => {
+      if (!maisRecentePorEscala[r.escalaId] || (r.criadoEm?.seconds||0) > (maisRecentePorEscala[r.escalaId].criadoEm?.seconds||0)) {
+        maisRecentePorEscala[r.escalaId] = r;
+      }
+    });
+    const cards = Object.values(maisRecentePorEscala).map(r => {
+      const ins = obterInsight(r);
+      if (!ins) return `<div class="insight-card"><div class="insight-header"><div class="insight-name">${r.escalaNome}</div><div class="list-item-date">${fmtDate(r.criadoEm)}</div></div><div class="insight-nivel">Escala personalizada — sem interpretação automática</div>${r.pontuacao!=null?`<div class="insight-pontuacao">Pontuação: ${r.pontuacao}</div>`:''}</div>`;
+      return `
+        <div class="insight-card ${ins.cor}">
+          <div class="insight-header">
+            <div class="insight-name">${r.escalaNome}</div>
+            <div class="list-item-date">${fmtDate(r.criadoEm)}</div>
+          </div>
+          <div class="insight-nivel">${ins.nivel}</div>
+          <div class="insight-pontuacao">Pontuação: ${ins.pontos}${ins.max?' / '+ins.max:''}</div>
+          ${ins.subscores ? `<div class="insight-subscores">${Object.entries(ins.subscores).map(([k,v])=>`<span><strong>${k}:</strong> ${v}</span>`).join('')}</div>` : ''}
+          ${ins.alerta ? `<div class="insight-alerta"><span>⚠</span><span>${ins.alerta}</span></div>` : ''}
+        </div>`;
+    }).join('');
+    insightsDiv.innerHTML = cards;
+  }
+
+  // ── GRÁFICOS DE EVOLUÇÃO ──
+  const graficosDiv = $('detalhe-graficos');
+  const porEscala = {};
+  resps.forEach(r => {
+    if (r.pontuacao == null) return;
+    if (!porEscala[r.escalaId]) porEscala[r.escalaId] = { nome: r.escalaNome, escalaId: r.escalaId, pontos: [] };
+    porEscala[r.escalaId].pontos.push({ data: r.criadoEm, valor: r.pontuacao });
+  });
+
+  // Ordenar por data (mais antiga -> mais recente)
+  Object.values(porEscala).forEach(e => e.pontos.sort((a,b) => (a.data?.seconds||0) - (b.data?.seconds||0)));
+
+  const graficos = Object.values(porEscala).filter(e => e.pontos.length >= 2);
+
+  if (!graficos.length) {
+    graficosDiv.innerHTML = '<div class="empty-state" style="padding:24px"><div class="empty-state-text" style="font-size:13px">É necessário pelo menos 2 respostas da mesma escala para gerar o gráfico de evolução.</div></div>';
+  } else {
+    graficosDiv.innerHTML = graficos.map(g => renderGrafico(g)).join('');
+  }
+
+  // ── HISTÓRICO ──
   const ed = $('detalhe-respostas');
-  if (!resps.length) { ed.innerHTML='<div class="empty-state"><div class="empty-state-icon">◌</div><div class="empty-state-text">Nenhuma resposta ainda. Envie uma escala!</div></div>'; }
+  if (!resps.length) { ed.innerHTML='<div class="empty-state" style="padding:20px"><div class="empty-state-text" style="font-size:13px">Sem respostas no histórico</div></div>'; }
   else {
-    ed.innerHTML = resps.map(r=>`<div class="list-item" data-resp="${r.id}"><div class="list-item-header"><span class="name" style="color:var(--text);font-weight:400">${r.escalaNome}</span><span class="list-item-date">${fmtDate(r.criadoEm)}</span></div>${r.pontuacao!=null?`<div style="margin-top:4px"><span class="badge badge-amber">Pontuação: ${r.pontuacao}</span></div>`:''}</div>`).join('');
+    ed.innerHTML = resps.map(r=>{
+      const ins = obterInsight(r);
+      return `<div class="list-item" data-resp="${r.id}">
+        <div class="list-item-header">
+          <span class="name" style="color:var(--text);font-weight:400">${r.escalaNome}</span>
+          <span class="list-item-date">${fmtDate(r.criadoEm)}</span>
+        </div>
+        ${ins?`<div style="margin-top:4px"><span class="badge badge-${ins.cor}">${ins.nivel}</span> <span style="font-size:12px;color:var(--text3);margin-left:6px">Pontuação ${ins.pontos}</span></div>`:(r.pontuacao!=null?`<div style="margin-top:4px"><span class="badge badge-amber">Pontuação: ${r.pontuacao}</span></div>`:'')}
+      </div>`;
+    }).join('');
     ed.querySelectorAll('[data-resp]').forEach(el=>el.addEventListener('click',()=>verResposta(el.dataset.resp)));
   }
 }
 
+// ════ GRÁFICO SVG ════
+function renderGrafico(dados) {
+  const w = 600, h = 160, pad = { top: 20, right: 20, bottom: 30, left: 40 };
+  const escala = ESCALAS.find(e => e.id === dados.escalaId);
+  const maxValor = escala?.interpretar ? (escala.interpretar([], 0, escala).max || Math.max(...dados.pontos.map(p=>p.valor))) : Math.max(...dados.pontos.map(p=>p.valor));
+  const minValor = 0;
+  const innerW = w - pad.left - pad.right;
+  const innerH = h - pad.top - pad.bottom;
+
+  const xStep = dados.pontos.length > 1 ? innerW / (dados.pontos.length - 1) : 0;
+  const yScale = v => pad.top + innerH - ((v - minValor) / (maxValor - minValor)) * innerH;
+
+  const pontos = dados.pontos.map((p, i) => ({ x: pad.left + i * xStep, y: yScale(p.valor), valor: p.valor, data: p.data }));
+  const linePath = pontos.map((p, i) => `${i===0?'M':'L'} ${p.x} ${p.y}`).join(' ');
+  const areaPath = `${linePath} L ${pontos[pontos.length-1].x} ${pad.top + innerH} L ${pontos[0].x} ${pad.top + innerH} Z`;
+
+  // Grid lines (5 horizontais)
+  const grid = [0, 0.25, 0.5, 0.75, 1].map(p => {
+    const y = pad.top + innerH * p;
+    const valor = Math.round(maxValor - (maxValor - minValor) * p);
+    return `<line class="chart-grid-line" x1="${pad.left}" x2="${w-pad.right}" y1="${y}" y2="${y}"/><text class="chart-label" x="${pad.left-6}" y="${y+3}" text-anchor="end">${valor}</text>`;
+  }).join('');
+
+  // X labels
+  const xLabels = pontos.map((p, i) => {
+    if (dados.pontos.length > 8 && i % Math.ceil(dados.pontos.length / 6) !== 0 && i !== dados.pontos.length - 1) return '';
+    return `<text class="chart-label" x="${p.x}" y="${h-pad.bottom+14}" text-anchor="middle">${fmtDateShort(p.data)}</text>`;
+  }).join('');
+
+  // Última resposta - tendência
+  let tendencia = '';
+  if (dados.pontos.length >= 2) {
+    const ultimo = dados.pontos[dados.pontos.length-1].valor;
+    const penultimo = dados.pontos[dados.pontos.length-2].valor;
+    const diff = ultimo - penultimo;
+    if (Math.abs(diff) >= 1) {
+      const seta = diff > 0 ? '↑' : '↓';
+      const cor = diff > 0 ? 'var(--accent3)' : 'var(--accent2)';
+      tendencia = `<span style="color:${cor};font-size:12px;font-weight:500">${seta} ${Math.abs(diff)}</span>`;
+    } else {
+      tendencia = `<span style="color:var(--text3);font-size:12px">→ estável</span>`;
+    }
+  }
+
+  return `
+    <div class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">${dados.nome}</div>
+        <div class="chart-meta">${dados.pontos.length} respostas · ${tendencia}</div>
+      </div>
+      <svg class="chart-svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="chartGrad-${dados.escalaId}" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="var(--accent)" stop-opacity=".4"/>
+            <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        ${grid}
+        <path d="${areaPath}" fill="url(#chartGrad-${dados.escalaId})"/>
+        <path d="${linePath}" class="chart-line"/>
+        ${pontos.map(p => `<circle class="chart-dot" cx="${p.x}" cy="${p.y}" r="4"><title>${p.valor} em ${fmtDateShort(p.data)}</title></circle>`).join('')}
+        ${xLabels}
+      </svg>
+    </div>`;
+}
+
+// ════ ESCALAS — BIBLIOTECA ════
 function renderEscalas() {
-  const pg=$('escalas-padrao-grid');
-  pg.innerHTML=ESCALAS_PADRAO.map(e=>`<div class="scale-card"><div class="scale-card-title">${e.nome}</div><div class="scale-card-desc">${e.desc}</div><div class="scale-meta"><span class="badge badge-blue">${e.perguntas.length} itens</span><span class="badge badge-amber">padrão</span></div><div class="scale-actions"><button class="btn btn-ghost btn-sm" data-ver="${e.id}">Ver itens</button><button class="btn btn-accent btn-sm" data-enviar="${e.id}">Enviar</button></div></div>`).join('');
-  pg.querySelectorAll('[data-ver]').forEach(b=>b.addEventListener('click',()=>verEscalaPadrao(b.dataset.ver)));
-  pg.querySelectorAll('[data-enviar]').forEach(b=>b.addEventListener('click',()=>enviarEscalaDireta(b.dataset.enviar)));
-  $('escalas-custom-count').textContent=cachedEscalas.length;
-  const cg=$('escalas-custom-grid');
-  if (!cachedEscalas.length) { cg.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">◍</div><div class="empty-state-text">Nenhuma escala criada ainda</div></div>'; return; }
-  cg.innerHTML=cachedEscalas.map(e=>`<div class="scale-card"><div class="scale-card-title">${e.nome}</div><div class="scale-card-desc">${e.desc||'Sem descrição'}</div><div class="scale-meta"><span class="badge badge-blue">${(e.perguntas||[]).length} itens</span><span class="badge badge-green">personalizada</span></div><div class="scale-actions"><button class="btn btn-accent btn-sm" data-enviar="${e.id}">Enviar</button><button class="btn btn-danger btn-sm" data-del="${e.id}">Excluir</button></div></div>`).join('');
-  cg.querySelectorAll('[data-enviar]').forEach(b=>b.addEventListener('click',()=>enviarEscalaDireta(b.dataset.enviar)));
-  cg.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>excluirEscala(b.dataset.del)));
+  // Filtros de categoria
+  const filtrosDiv = $('categoria-filtros');
+  const grupos = escalasPorCategoria();
+  const customizadas = cachedEscalas.length ? [{ id:'personalizada', nome:'Minhas escalas', icone:'★', ordem:99, escalas: cachedEscalas }] : [];
+  const todasCategorias = [...grupos, ...customizadas].filter(g => g.escalas.length > 0);
+
+  filtrosDiv.innerHTML = `<button class="categoria-filtro ${filtroCategoria==='todas'?'active':''}" data-cat="todas">Todas</button>` +
+    todasCategorias.map(g => `<button class="categoria-filtro ${filtroCategoria===g.id?'active':''}" data-cat="${g.id}">${g.nome} <span style="opacity:.6">${g.escalas.length}</span></button>`).join('');
+
+  filtrosDiv.querySelectorAll('[data-cat]').forEach(b => b.addEventListener('click', () => {
+    filtroCategoria = b.dataset.cat;
+    renderEscalas();
+  }));
+
+  // Conteúdo
+  const conteudoDiv = $('escalas-conteudo');
+  const categoriasFiltradas = filtroCategoria === 'todas' ? todasCategorias : todasCategorias.filter(g => g.id === filtroCategoria);
+
+  if (!categoriasFiltradas.length) {
+    conteudoDiv.innerHTML = '<div class="empty-state"><div class="empty-state-icon">◍</div><div class="empty-state-text">Nenhuma escala nesta categoria</div></div>';
+    return;
+  }
+
+  conteudoDiv.innerHTML = categoriasFiltradas.map(grupo => `
+    <div class="categoria-section">
+      <div class="categoria-header">
+        <div class="categoria-title">
+          <span class="categoria-icon">${grupo.icone}</span>
+          ${grupo.nome}
+        </div>
+        <div class="categoria-count">${grupo.escalas.length} ${grupo.escalas.length===1?'escala':'escalas'}</div>
+      </div>
+      <div class="scales-grid">
+        ${grupo.escalas.map(e => renderScaleCard(e, grupo.id === 'personalizada')).join('')}
+      </div>
+    </div>`).join('');
+
+  // Listeners
+  conteudoDiv.querySelectorAll('[data-ver]').forEach(b=>b.addEventListener('click',()=>verEscala(b.dataset.ver)));
+  conteudoDiv.querySelectorAll('[data-enviar]').forEach(b=>b.addEventListener('click',()=>enviarEscalaDireta(b.dataset.enviar)));
+  conteudoDiv.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>excluirEscala(b.dataset.del)));
+}
+
+function renderScaleCard(e, isCustom) {
+  return `<div class="scale-card">
+    <div class="scale-card-title">${e.nome}</div>
+    <div class="scale-card-desc">${e.descCurta || e.desc || 'Sem descrição'}</div>
+    <div class="scale-meta">
+      <span class="badge badge-blue">${(e.perguntas||[]).length} itens</span>
+      ${isCustom ? '<span class="badge badge-green">personalizada</span>' : '<span class="badge badge-amber">validada</span>'}
+    </div>
+    <div class="scale-actions">
+      <button class="btn btn-ghost btn-sm" data-ver="${e.id}">Ver itens</button>
+      <button class="btn btn-accent btn-sm" data-enviar="${e.id}">Enviar</button>
+      ${isCustom ? `<button class="btn btn-danger btn-sm" data-del="${e.id}">✕</button>` : ''}
+    </div>
+  </div>`;
 }
 
 async function excluirEscala(id) {
@@ -506,10 +722,21 @@ async function excluirEscala(id) {
   toast('Escala excluída.');
 }
 
-function verEscalaPadrao(id) {
-  const e=ESCALAS_PADRAO.find(x=>x.id===id); if(!e) return;
-  $('modal-resposta-title').textContent=e.nome;
-  $('modal-resposta-content').innerHTML=`<p style="font-size:13px;color:var(--text2);margin-bottom:16px">${e.desc}</p>${e.perguntas.map((p,i)=>`<div class="resposta-section"><div class="resposta-label">Item ${i+1}</div><div class="resposta-value">${p.texto}</div><div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">${p.opcoes.map((o,oi)=>`<span class="badge badge-blue">${oi}. ${o}</span>`).join('')}</div></div>`).join('')}`;
+function verEscala(id) {
+  const e = getEscalaById(id, cachedEscalas);
+  if (!e) return;
+  $('modal-resposta-title').textContent = e.nome;
+  $('modal-resposta-content').innerHTML = `
+    <p style="font-size:13px;color:var(--text2);margin-bottom:8px"><strong>${e.descCurta || e.desc || ''}</strong></p>
+    ${e.instrucoes ? `<p style="font-size:12px;color:var(--text3);margin-bottom:16px;font-style:italic">${e.instrucoes}</p>` : ''}
+    ${e.perguntas.map((p,i)=>`
+      <div class="resposta-section">
+        <div class="resposta-label">Item ${i+1}</div>
+        <div class="resposta-value">${p.texto || '(sem enunciado — apenas opções)'}</div>
+        <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap">
+          ${(p.opcoes||[]).map((o,oi)=>`<span class="badge badge-blue">${oi}. ${o}</span>`).join('')}
+        </div>
+      </div>`).join('')}`;
   openModal('modal-ver-resposta');
 }
 
@@ -550,7 +777,7 @@ async function salvarEscala() {
   if (!nome){toast('Digite um nome');return;}
   if (!builderPerguntas.length){toast('Adicione pelo menos uma pergunta');return;}
   await addDoc(collection(db,'escalas'),{
-    nome, desc:$('ne-desc').value.trim(), instrucoes:$('ne-instrucoes').value.trim(), tipo:'custom',
+    nome, desc:$('ne-desc').value.trim(), descCurta:$('ne-desc').value.trim(), instrucoes:$('ne-instrucoes').value.trim(), tipo:'custom',
     perguntas:builderPerguntas.map(q=>({texto:q.texto,tipo:q.tipo,opcoes:q.opcoes.filter(o=>o.trim())})),
     criadoEm:serverTimestamp()
   });
@@ -561,14 +788,37 @@ async function salvarEscala() {
 }
 
 function abrirEnviarEscala() {
-  const sel=$('enviar-escala-select');
-  sel.innerHTML=[...ESCALAS_PADRAO,...cachedEscalas].map(e=>`<option value="${e.id}">${e.nome}</option>`).join('');
+  const catSel = $('enviar-categoria-select');
+  const grupos = escalasPorCategoria().filter(g => g.escalas.length > 0);
+  catSel.innerHTML = grupos.map(g => `<option value="${g.id}">${g.nome}</option>`).join('') +
+    (cachedEscalas.length ? '<option value="personalizada">Minhas escalas personalizadas</option>' : '');
+  popularEscalasDoSelect();
   $('escala-link-box').style.display='none';
   $('btn-wpp-escala').style.display='none';
   openModal('modal-enviar-escala');
 }
 
-function enviarEscalaDireta(id) { abrirEnviarEscala(); $('enviar-escala-select').value=id; }
+function popularEscalasDoSelect() {
+  const cat = $('enviar-categoria-select').value;
+  const sel = $('enviar-escala-select');
+  let escalas;
+  if (cat === 'personalizada') {
+    escalas = cachedEscalas;
+  } else {
+    escalas = ESCALAS.filter(e => e.categoria === cat);
+  }
+  sel.innerHTML = escalas.map(e => `<option value="${e.id}">${e.nome} — ${e.descCurta || e.desc || ''}</option>`).join('');
+}
+
+function enviarEscalaDireta(id) {
+  abrirEnviarEscala();
+  const escala = getEscalaById(id, cachedEscalas);
+  if (escala) {
+    $('enviar-categoria-select').value = escala.categoria;
+    popularEscalasDoSelect();
+    $('enviar-escala-select').value = id;
+  }
+}
 
 function gerarEscalaLink() {
   const id=$('enviar-escala-select').value;
@@ -583,18 +833,42 @@ function renderRespostas() {
   if (!cachedRespostas.length){div.innerHTML='<div class="empty-state"><div class="empty-state-icon">◌</div><div class="empty-state-text">Nenhuma resposta ainda</div></div>';return;}
   div.innerHTML=cachedRespostas.map(r=>{
     const pac=cachedPacientes.find(p=>p.id===r.pacienteId);
-    return `<div class="list-item" data-resp="${r.id}"><div class="list-item-header"><span class="name" style="color:var(--text);font-weight:400">${pac?pac.nome:'Desconhecido'}</span><span class="list-item-date">${fmtDate(r.criadoEm)}</span></div><div style="font-size:13px;color:var(--text2)">${r.escalaNome||'—'}</div>${r.pontuacao!=null?`<div style="margin-top:6px"><span class="badge badge-amber">Pontuação: ${r.pontuacao}</span></div>`:''}</div>`;
+    const ins = obterInsight(r);
+    return `<div class="list-item" data-resp="${r.id}">
+      <div class="list-item-header"><span class="name" style="color:var(--text);font-weight:400">${pac?pac.nome:'Anônimo'}</span><span class="list-item-date">${fmtDate(r.criadoEm)}</span></div>
+      <div style="font-size:13px;color:var(--text2)">${r.escalaNome||'—'}</div>
+      ${ins?`<div style="margin-top:6px"><span class="badge badge-${ins.cor}">${ins.nivel}</span></div>`:(r.pontuacao!=null?`<div style="margin-top:6px"><span class="badge badge-amber">Pontuação: ${r.pontuacao}</span></div>`:'')}
+    </div>`;
   }).join('');
   div.querySelectorAll('[data-resp]').forEach(el=>el.addEventListener('click',()=>verResposta(el.dataset.resp)));
 }
 
 function verResposta(id) {
   const r=cachedRespostas.find(x=>x.id===id); if(!r) return;
-  const escala=[...ESCALAS_PADRAO,...cachedEscalas].find(e=>e.id===r.escalaId);
-  $('modal-resposta-title').textContent=r.escalaNome||'Resposta';
-  $('modal-resposta-content').innerHTML=`${r.pontuacao!=null?`<div class="resposta-section"><div class="resposta-label">Pontuação total</div><div class="resposta-value" style="font-family:'Fraunces',serif;font-size:24px">${r.pontuacao}</div></div>`:''}${(r.respostas||[]).map((resp,i)=>`<div class="resposta-section"><div class="resposta-label">${escala?.perguntas[i]?.texto||'Pergunta '+(i+1)}</div><div class="resposta-value">${resp}</div></div>`).join('')}`;
+  const escala = getEscalaById(r.escalaId, cachedEscalas);
+  const pac = cachedPacientes.find(p=>p.id===r.pacienteId);
+  const ins = obterInsight(r);
+
+  $('modal-resposta-title').textContent = r.escalaNome || 'Resposta';
+  $('modal-resposta-content').innerHTML = `
+    <div style="font-size:12px;color:var(--text3);margin-bottom:16px">${pac?pac.nome+' · ':''}${fmtDate(r.criadoEm)}</div>
+    ${ins ? `<div class="insight-card ${ins.cor}" style="margin-bottom:20px">
+      <div class="insight-nivel">${ins.nivel}</div>
+      <div class="insight-pontuacao">Pontuação: ${ins.pontos}${ins.max?' / '+ins.max:''}</div>
+      ${ins.subscores?`<div class="insight-subscores">${Object.entries(ins.subscores).map(([k,v])=>`<span><strong>${k}:</strong> ${v}</span>`).join('')}</div>`:''}
+      ${ins.alerta?`<div class="insight-alerta"><span>⚠</span><span>${ins.alerta}</span></div>`:''}
+    </div>` : (r.pontuacao!=null?`<div class="resposta-section"><div class="resposta-label">Pontuação total</div><div class="resposta-value" style="font-family:'Fraunces',serif;font-size:24px">${r.pontuacao}</div></div>`:'')}
+    <div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px">Respostas item a item</div>
+    ${(r.respostas||[]).map((resp,i)=>{
+      const txtPergunta = escala?.perguntas[i]?.texto && escala.perguntas[i].texto.trim() ? escala.perguntas[i].texto : `Item ${i+1}`;
+      return `<div class="resposta-section">
+        <div class="resposta-label">${txtPergunta}</div>
+        <div class="resposta-value">${resp}</div>
+      </div>`;
+    }).join('')}`;
   openModal('modal-ver-resposta');
 }
 </script>
+<div class="toast" id="toast"></div>
 </body>
 </html>
