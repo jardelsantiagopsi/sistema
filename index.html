@@ -498,14 +498,17 @@ async function pedirPermissaoNotificacao() {
 
 function notificarNovaResposta(nomePaciente, nomeEscala) {
   if (Notification.permission !== 'granted') return;
-  const n = new Notification('Nova resposta recebida 📋', {
-    body: `${nomePaciente} respondeu ${nomeEscala}`,
-    icon: '/sistema/icon-192.png',
-    badge: '/sistema/icon-192.png',
-    tag: 'nova-resposta',
-    renotify: true,
-  });
-  n.onclick = () => { window.focus(); n.close(); };
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.ready.then(reg => {
+      reg.showNotification('Nova resposta recebida 📋', {
+        body: `${nomePaciente} respondeu ${nomeEscala}`,
+        icon: '/sistema/icon-192.png',
+        badge: '/sistema/icon-192.png',
+        tag: 'nova-resposta',
+        renotify: true,
+      });
+    });
+  }
 }
 
 onAuthStateChanged(auth, user => {
