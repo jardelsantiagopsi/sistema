@@ -101,13 +101,13 @@
     /* ── HERO ── */
     .hero {
       min-height: 100vh;
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       align-items: center;
-      justify-content: center;
+      gap: 4rem;
       position: relative;
       overflow: hidden;
-      padding: 7rem 4rem 5rem;
-      text-align: center;
+      padding: 7rem 5rem 5rem;
     }
 
     .hero::before {
@@ -115,26 +115,53 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse 90% 55% at 50% -5%, rgba(196,168,130,.08) 0%, transparent 60%),
+        radial-gradient(ellipse 70% 60% at 30% 50%, rgba(196,168,130,.07) 0%, transparent 60%),
         radial-gradient(ellipse 40% 40% at 85% 85%, rgba(143,190,154,.04) 0%, transparent 55%);
       pointer-events: none;
     }
 
-    /* decorative lines */
-    .hero::after {
+    .hero-content { position: relative; z-index: 1; }
+
+    .hero-photo-wrap {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-photo-frame {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      margin-left: auto;
+    }
+
+    .hero-photo-frame img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      object-position: center top;
+      border-radius: var(--radius);
+      border: 1px solid var(--border2);
+      display: block;
+    }
+
+    .hero-photo-frame::before {
       content: '';
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: min(700px, 90vw);
-      height: min(700px, 90vw);
-      border: 1px solid rgba(196,168,130,.05);
-      border-radius: 50%;
+      inset: -10px;
+      border: 1px solid rgba(196,168,130,.12);
+      border-radius: calc(var(--radius) + 10px);
       pointer-events: none;
     }
 
-    .hero-content { position: relative; max-width: 820px; }
+    .hero-photo-frame::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 35%;
+      background: linear-gradient(to top, rgba(15,14,13,.5), transparent);
+      border-radius: 0 0 var(--radius) var(--radius);
+      pointer-events: none;
+    }
 
     .hero-label {
       display: inline-block;
@@ -152,7 +179,7 @@
     .hero-title {
       font-family: 'Fraunces', serif;
       font-weight: 300;
-      font-size: clamp(3.8rem, 9vw, 7rem);
+      font-size: clamp(3rem, 5.5vw, 5.5rem);
       line-height: 1.02;
       letter-spacing: -.025em;
       margin-bottom: 1.5rem;
@@ -164,17 +191,16 @@
     }
 
     .hero-sub {
-      font-size: 1.05rem;
+      font-size: 1rem;
       color: var(--text2);
-      max-width: 500px;
-      margin: 0 auto 2.5rem;
+      max-width: 440px;
+      margin: 0 0 2.5rem;
       line-height: 1.8;
     }
 
     .hero-actions {
       display: flex;
       gap: 1rem;
-      justify-content: center;
       flex-wrap: wrap;
     }
 
@@ -276,55 +302,9 @@
     /* ── ABOUT ── */
     .about-grid {
       display: grid;
-      grid-template-columns: 1fr 1.1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 5rem;
-      align-items: center;
-    }
-
-    .photo-wrap { position: relative; }
-
-    .photo-box {
-      width: 100%;
-      aspect-ratio: 3/4;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-
-    .photo-box img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center top;
-      display: block;
-    }
-
-    .exp-badge {
-      position: absolute;
-      bottom: -1.25rem;
-      right: -1.25rem;
-      background: var(--surface3);
-      border: 1px solid var(--border2);
-      border-radius: var(--radius);
-      padding: 1.25rem 1.5rem;
-      text-align: center;
-    }
-
-    .exp-badge-num {
-      font-family: 'Fraunces', serif;
-      font-size: 2.2rem;
-      font-weight: 400;
-      color: var(--accent);
-      line-height: 1;
-    }
-
-    .exp-badge-label {
-      font-size: .65rem;
-      color: var(--text2);
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      margin-top: .3rem;
+      align-items: start;
     }
 
     .about-text {
@@ -582,14 +562,20 @@
       .nav-links { display: none; }
       .section { padding: 5rem 1.5rem; }
       .sep { margin: 0 1.5rem; }
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 6rem 1.5rem 4rem;
+        text-align: center;
+      }
+      .hero-actions { justify-content: center; }
+      .hero-photo-wrap { order: -1; }
+      .hero-photo-frame { max-width: 260px; margin: 0 auto; }
       .about-grid,
       .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
-      .exp-badge { display: none; }
       .cards { grid-template-columns: 1fr; }
       .services-head { flex-direction: column; align-items: flex-start; }
       footer { padding: 2rem 1.5rem; }
       .footer-inner { flex-direction: column; gap: .75rem; text-align: center; }
-      .hero { padding: 6rem 1.5rem 4rem; }
     }
   </style>
 </head>
@@ -621,6 +607,11 @@
       <a href="#sobre" class="btn-ghost">Saiba mais</a>
     </div>
   </div>
+  <div class="hero-photo-wrap">
+    <div class="hero-photo-frame">
+      <img src="jardel.png" alt="Jardel Santiago — Psicólogo Clínico">
+    </div>
+  </div>
   <div class="scroll-hint">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M12 5v14M5 12l7 7 7-7"/>
@@ -635,16 +626,6 @@
   <div class="container">
     <div class="about-grid">
 
-      <div class="photo-wrap fade">
-        <div class="photo-box">
-          <img src="jardel.png" alt="Jardel Santiago — Psicólogo Clínico">
-        </div>
-        <div class="exp-badge">
-          <div class="exp-badge-num">5+</div>
-          <div class="exp-badge-label">Anos de<br>experiência</div>
-        </div>
-      </div>
-
       <div class="fade">
         <p class="tag">Sobre mim</p>
         <h2 class="section-title">Um processo que<br><em>transforma</em></h2>
@@ -657,42 +638,42 @@
         <p class="about-text">
           Mais do que apenas suportar a vida, acredito na possibilidade de vivê-la com mais consciência, equilíbrio e verdade.
         </p>
+      </div>
 
-        <div class="features">
-          <div class="feature">
-            <div class="feat-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-              </svg>
-            </div>
-            <div class="feat-text">
-              <h4>Especialista em TCC</h4>
-              <p>Terapia Cognitivo Comportamental baseada em evidências científicas</p>
-            </div>
+      <div class="features fade">
+        <div class="feature">
+          <div class="feat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+            </svg>
           </div>
-
-          <div class="feature">
-            <div class="feat-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-              </svg>
-            </div>
-            <div class="feat-text">
-              <h4>Acolhedor e objetivo</h4>
-              <p>Processo estruturado para construir mudanças reais na sua vida</p>
-            </div>
+          <div class="feat-text">
+            <h4>Especialista em TCC</h4>
+            <p>Terapia Cognitivo Comportamental baseada em evidências científicas</p>
           </div>
+        </div>
 
-          <div class="feature">
-            <div class="feat-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-              </svg>
-            </div>
-            <div class="feat-text">
-              <h4>Atendimento individual para adultos</h4>
-              <p>Presencial e online, com total sigilo e ética profissional</p>
-            </div>
+        <div class="feature">
+          <div class="feat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+          </div>
+          <div class="feat-text">
+            <h4>Acolhedor e objetivo</h4>
+            <p>Processo estruturado para construir mudanças reais na sua vida</p>
+          </div>
+        </div>
+
+        <div class="feature">
+          <div class="feat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            </svg>
+          </div>
+          <div class="feat-text">
+            <h4>Atendimento individual para adultos</h4>
+            <p>Presencial e online, com total sigilo e ética profissional</p>
           </div>
         </div>
       </div>
