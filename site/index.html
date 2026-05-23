@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jardel Santiago — Psicólogo</title>
+  <meta name="description" content="Psicólogo clínico — psicoterapia individual presencial e online. Um espaço de escuta genuína para o seu autoconhecimento e bem-estar.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0f0e0d;
+      --surface:  #1a1815;
+      --surface2: #232018;
+      --surface3: #2a2620;
+      --border:   #2e2a24;
+      --border2:  #3d3830;
+      --text:     #e8e0d4;
+      --text2:    #9a9080;
+      --text3:    #5a5248;
+      --accent:   #c4a882;
+      --accent2:  #8fbe9a;
+      --gold:     #d4aa70;
+      --radius:   12px;
+      --radius-sm: 8px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 4rem;
+      background: rgba(15,14,13,.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-brand {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 1.05rem;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: .02em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: .8rem;
+      font-weight: 400;
+      color: var(--text2);
+      text-decoration: none;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      transition: color .2s;
+    }
+
+    .nav-links a:hover { color: var(--accent); }
+
+    .nav-cta {
+      display: inline-block;
+      padding: .5rem 1.25rem;
+      border: 1px solid var(--accent);
+      border-radius: var(--radius-sm);
+      color: var(--accent);
+      font-size: .8rem;
+      font-weight: 400;
+      letter-spacing: .05em;
+      text-decoration: none;
+      transition: all .2s;
+    }
+
+    .nav-cta:hover {
+      background: var(--accent);
+      color: #1a1208;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 7rem 4rem 5rem;
+      text-align: center;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 90% 55% at 50% -5%, rgba(196,168,130,.08) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 85% 85%, rgba(143,190,154,.04) 0%, transparent 55%);
+      pointer-events: none;
+    }
+
+    /* decorative lines */
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(700px, 90vw);
+      height: min(700px, 90vw);
+      border: 1px solid rgba(196,168,130,.05);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero-content { position: relative; max-width: 820px; }
+
+    .hero-label {
+      display: inline-block;
+      font-size: .7rem;
+      font-weight: 500;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      padding: .3rem 1rem;
+      border: 1px solid rgba(196,168,130,.28);
+      border-radius: 100px;
+      margin-bottom: 2rem;
+    }
+
+    .hero-title {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: clamp(3.8rem, 9vw, 7rem);
+      line-height: 1.02;
+      letter-spacing: -.025em;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--text2);
+      max-width: 500px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.8;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      background: var(--accent);
+      color: #1a1208;
+      padding: .875rem 2rem;
+      border-radius: var(--radius-sm);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: .9rem;
+      letter-spacing: .02em;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background .2s, transform .2s;
+    }
+
+    .btn-primary:hover {
+      background: var(--gold);
+      transform: translateY(-2px);
+    }
+
+    .btn-ghost {
+      display: inline-block;
+      background: transparent;
+      color: var(--text2);
+      padding: .875rem 2rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border2);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      font-size: .9rem;
+      letter-spacing: .02em;
+      text-decoration: none;
+      cursor: pointer;
+      transition: border-color .2s, color .2s;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .5rem;
+      color: var(--text3);
+      font-size: .65rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      animation: nudge 2.5s ease-in-out infinite;
+    }
+
+    @keyframes nudge {
+      0%,100% { transform: translateX(-50%) translateY(0); }
+      55%      { transform: translateX(-50%) translateY(7px); }
+    }
+
+    /* ── SHARED ── */
+    .section { padding: 7rem 4rem; }
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    .tag {
+      font-size: .68rem;
+      font-weight: 500;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: .75rem;
+    }
+
+    .section-title {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: clamp(2rem, 3.5vw, 2.9rem);
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .sep {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border2) 50%, transparent);
+      margin: 0 4rem;
+    }
+
+    /* ── ABOUT ── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+
+    .photo-wrap { position: relative; }
+
+    .photo-box {
+      width: 100%;
+      aspect-ratio: 3/4;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: .75rem;
+      color: var(--text3);
+      font-size: .75rem;
+      letter-spacing: .08em;
+    }
+
+    .photo-box svg { width: 44px; height: 44px; opacity: .25; }
+
+    .exp-badge {
+      position: absolute;
+      bottom: -1.25rem;
+      right: -1.25rem;
+      background: var(--surface3);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      text-align: center;
+    }
+
+    .exp-badge-num {
+      font-family: 'Fraunces', serif;
+      font-size: 2.2rem;
+      font-weight: 400;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .exp-badge-label {
+      font-size: .65rem;
+      color: var(--text2);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-top: .3rem;
+    }
+
+    .about-text {
+      font-size: .975rem;
+      color: var(--text2);
+      line-height: 1.9;
+      margin-bottom: 1.25rem;
+    }
+
+    .features {
+      display: flex;
+      flex-direction: column;
+      gap: .875rem;
+      margin-top: 2rem;
+    }
+
+    .feature {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: .875rem 1.125rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      transition: border-color .2s;
+    }
+
+    .feature:hover { border-color: var(--border2); }
+
+    .feat-icon {
+      width: 34px; height: 34px;
+      background: rgba(196,168,130,.08);
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .feat-icon svg { width: 17px; height: 17px; color: var(--accent); }
+
+    .feat-text h4 {
+      font-size: .855rem;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: .15rem;
+    }
+
+    .feat-text p { font-size: .79rem; color: var(--text2); }
+
+    /* ── SERVICES ── */
+    .services-section { background: var(--surface); }
+
+    .services-head {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem 1.75rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color .3s, transform .3s;
+    }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .card:hover { border-color: var(--border2); transform: translateY(-4px); }
+    .card:hover::after { opacity: 1; }
+
+    .card-icon {
+      width: 46px; height: 46px;
+      background: rgba(196,168,130,.08);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-icon svg { width: 23px; height: 23px; color: var(--accent); }
+
+    .card h3 {
+      font-family: 'Fraunces', serif;
+      font-weight: 400;
+      font-size: 1.2rem;
+      color: var(--text);
+      margin-bottom: .6rem;
+    }
+
+    .card p {
+      font-size: .855rem;
+      color: var(--text2);
+      line-height: 1.75;
+    }
+
+    .chip {
+      display: inline-block;
+      margin-top: 1.25rem;
+      font-size: .67rem;
+      font-weight: 500;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      padding: .22rem .75rem;
+      background: rgba(196,168,130,.07);
+      border-radius: 100px;
+    }
+
+    /* ── CONTACT ── */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .clink {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: .875rem 1.125rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      transition: border-color .2s;
+    }
+
+    .clink:hover { border-color: var(--accent); }
+
+    .clink-icon {
+      width: 38px; height: 38px;
+      background: rgba(196,168,130,.08);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .clink-icon svg { width: 19px; height: 19px; color: var(--accent); }
+
+    .clink-body span {
+      display: block;
+      font-size: .67rem;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      margin-bottom: .1rem;
+    }
+
+    .clink-body strong {
+      font-size: .875rem;
+      font-weight: 400;
+      color: var(--text);
+    }
+
+    /* form */
+    .form { display: flex; flex-direction: column; gap: .875rem; }
+
+    .field { display: flex; flex-direction: column; gap: .35rem; }
+
+    .field label {
+      font-size: .72rem;
+      color: var(--text2);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .field input,
+    .field textarea {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: .75rem 1rem;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .9rem;
+      font-weight: 300;
+      outline: none;
+      resize: vertical;
+      transition: border-color .2s;
+    }
+
+    .field input:focus,
+    .field textarea:focus { border-color: var(--accent); }
+
+    .field input::placeholder,
+    .field textarea::placeholder { color: var(--text3); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 4rem;
+    }
+
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-brand {
+      font-family: 'Fraunces', serif;
+      font-weight: 300;
+      font-size: 1rem;
+      color: var(--text2);
+    }
+
+    .footer-copy { font-size: .78rem; color: var(--text3); }
+
+    /* ── ANIMATIONS ── */
+    .fade {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity .65s ease, transform .65s ease;
+    }
+
+    .fade.on { opacity: 1; transform: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .section { padding: 5rem 1.5rem; }
+      .sep { margin: 0 1.5rem; }
+      .about-grid,
+      .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .exp-badge { display: none; }
+      .cards { grid-template-columns: 1fr; }
+      .services-head { flex-direction: column; align-items: flex-start; }
+      footer { padding: 2rem 1.5rem; }
+      .footer-inner { flex-direction: column; gap: .75rem; text-align: center; }
+      .hero { padding: 6rem 1.5rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════ NAV ═══════════════════ -->
+<nav>
+  <a href="#inicio" class="nav-brand">Jardel Santiago</a>
+  <ul class="nav-links">
+    <li><a href="#sobre">Sobre</a></li>
+    <li><a href="#servicos">Serviços</a></li>
+    <li><a href="#contato">Contato</a></li>
+  </ul>
+  <a href="#contato" class="nav-cta">Agendar consulta</a>
+</nav>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<section class="hero" id="inicio">
+  <div class="hero-content">
+    <div class="hero-label">Psicólogo · CRP XX/XXXXX</div>
+    <h1 class="hero-title">
+      Jardel<br><em>Santiago</em>
+    </h1>
+    <p class="hero-sub">
+      Um espaço seguro de escuta e reflexão para quem busca autoconhecimento, equilíbrio emocional e qualidade de vida.
+    </p>
+    <div class="hero-actions">
+      <a href="#contato" class="btn-primary">Agendar uma conversa</a>
+      <a href="#sobre" class="btn-ghost">Saiba mais</a>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 5v14M5 12l7 7 7-7"/>
+    </svg>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ═══════════════════ SOBRE ═══════════════════ -->
+<section class="section" id="sobre">
+  <div class="container">
+    <div class="about-grid">
+
+      <div class="photo-wrap fade">
+        <div class="photo-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="8" r="4"/>
+            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+          </svg>
+          <span>Foto profissional</span>
+        </div>
+        <div class="exp-badge">
+          <div class="exp-badge-num">5+</div>
+          <div class="exp-badge-label">Anos de<br>experiência</div>
+        </div>
+      </div>
+
+      <div class="fade">
+        <p class="tag">Sobre mim</p>
+        <h2 class="section-title">Uma escuta que<br><em>transforma</em></h2>
+        <p class="about-text">
+          Sou psicólogo clínico com foco em psicoterapia individual para adultos. Atuo com uma abordagem humanizada, integrando técnicas baseadas em evidências para promover autoconhecimento, bem-estar emocional e qualidade de vida.
+        </p>
+        <p class="about-text">
+          Acredito que a psicoterapia é uma parceria — um espaço de escuta genuína e sem julgamentos, onde cada pessoa pode se reconectar consigo mesma e desenvolver recursos para enfrentar os desafios da vida.
+        </p>
+
+        <div class="features">
+          <div class="feature">
+            <div class="feat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 14l9-5-9-5-9 5 9 5z"/>
+                <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0112 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+              </svg>
+            </div>
+            <div class="feat-text">
+              <h4>Formação sólida</h4>
+              <p>Graduação em Psicologia com especializações na área clínica</p>
+            </div>
+          </div>
+
+          <div class="feature">
+            <div class="feat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+              </svg>
+            </div>
+            <div class="feat-text">
+              <h4>Atendimento humanizado</h4>
+              <p>Cada pessoa é única — o processo terapêutico é personalizado para você</p>
+            </div>
+          </div>
+
+          <div class="feature">
+            <div class="feat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+              </svg>
+            </div>
+            <div class="feat-text">
+              <h4>Ética e sigilo profissional</h4>
+              <p>Compromisso com o Código de Ética do Conselho Federal de Psicologia</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ═══════════════════ SERVIÇOS ═══════════════════ -->
+<section class="section services-section" id="servicos">
+  <div class="container">
+    <div class="services-head">
+      <div>
+        <p class="tag">Serviços</p>
+        <h2 class="section-title">Como posso<br><em>te ajudar</em></h2>
+      </div>
+      <a href="#contato" class="btn-ghost">Tirar dúvidas →</a>
+    </div>
+
+    <div class="cards">
+      <div class="card fade">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+        </div>
+        <h3>Psicoterapia Individual</h3>
+        <p>Acompanhamento psicológico presencial em consultório, com sessões semanais. Um espaço de escuta, reflexão e transformação pessoal.</p>
+        <span class="chip">Presencial</span>
+      </div>
+
+      <div class="card fade">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <path d="M8 21h8M12 17v4"/>
+          </svg>
+        </div>
+        <h3>Atendimento Online</h3>
+        <p>Psicoterapia via videoconferência com a mesma qualidade e sigilo do atendimento presencial. Atendo em todo o Brasil.</p>
+        <span class="chip">Online · Todo o Brasil</span>
+      </div>
+
+      <div class="card fade">
+        <div class="card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+          </svg>
+        </div>
+        <h3>Avaliação Psicológica</h3>
+        <p>Processo estruturado com instrumentos validados para compreensão aprofundada de aspectos cognitivos, emocionais e comportamentais.</p>
+        <span class="chip">Presencial</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ═══════════════════ CONTATO ═══════════════════ -->
+<section class="section" id="contato">
+  <div class="container">
+    <div class="contact-grid">
+
+      <div>
+        <p class="tag">Contato</p>
+        <h2 class="section-title">Vamos dar<br>o primeiro <em>passo</em></h2>
+        <p class="about-text" style="margin-top:.75rem;">
+          Entre em contato para agendar uma consulta ou tirar dúvidas sobre o processo terapêutico. Responderei em até 24 horas.
+        </p>
+
+        <div class="contact-links">
+          <a href="mailto:jardelsantiago.psi@gmail.com" class="clink">
+            <div class="clink-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <div class="clink-body">
+              <span>E-mail</span>
+              <strong>jardelsantiago.psi@gmail.com</strong>
+            </div>
+          </a>
+
+          <a href="https://wa.me/55XXXXXXXXXX" class="clink" target="_blank" rel="noopener">
+            <div class="clink-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor" style="color:var(--accent2)">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              </svg>
+            </div>
+            <div class="clink-body">
+              <span>WhatsApp</span>
+              <strong>(XX) XXXXX-XXXX</strong>
+            </div>
+          </a>
+
+          <a href="https://instagram.com/jardelsantiago.psi" class="clink" target="_blank" rel="noopener">
+            <div class="clink-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="2" width="20" height="20" rx="5"/>
+                <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+              </svg>
+            </div>
+            <div class="clink-body">
+              <span>Instagram</span>
+              <strong>@jardelsantiago.psi</strong>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="fade">
+        <form class="form" onsubmit="sendForm(event)">
+          <div class="field">
+            <label>Nome</label>
+            <input type="text" placeholder="Seu nome completo" required>
+          </div>
+          <div class="field">
+            <label>E-mail ou WhatsApp</label>
+            <input type="text" placeholder="Como prefere ser contatado?" required>
+          </div>
+          <div class="field">
+            <label>Mensagem</label>
+            <textarea rows="5" placeholder="Conte um pouco sobre o que você está buscando..." required></textarea>
+          </div>
+          <button type="submit" class="btn-primary" style="width:100%;font-size:.9rem;">
+            Enviar mensagem
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">Jardel Santiago · Psicólogo</div>
+    <div class="footer-copy">CRP XX/XXXXX &nbsp;·&nbsp; © 2025</div>
+  </div>
+</footer>
+
+<script>
+  // fade-in on scroll
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); }
+    });
+  }, { threshold: .12 });
+
+  document.querySelectorAll('.fade').forEach((el, i) => {
+    el.style.transitionDelay = `${(i % 3) * .1}s`;
+    io.observe(el);
+  });
+
+  // form feedback
+  function sendForm(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type=submit]');
+    btn.textContent = 'Mensagem enviada ✓';
+    btn.style.cssText = 'background:rgba(143,190,154,.12);color:#8fbe9a;border:1px solid rgba(143,190,154,.3);width:100%;font-size:.9rem;';
+    setTimeout(() => {
+      btn.style.cssText = 'width:100%;font-size:.9rem;';
+      btn.textContent = 'Enviar mensagem';
+      e.target.reset();
+    }, 3500);
+  }
+</script>
+</body>
+</html>
