@@ -290,17 +290,15 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: .75rem;
-      color: var(--text3);
-      font-size: .75rem;
-      letter-spacing: .08em;
     }
 
-    .photo-box svg { width: 44px; height: 44px; opacity: .25; }
+    .photo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+    }
 
     .exp-badge {
       position: absolute;
@@ -639,11 +637,7 @@
 
       <div class="photo-wrap fade">
         <div class="photo-box">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="12" cy="8" r="4"/>
-            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
-          </svg>
-          <span>Foto profissional</span>
+          <img src="jardel.png" alt="Jardel Santiago — Psicólogo Clínico">
         </div>
         <div class="exp-badge">
           <div class="exp-badge-num">5+</div>
