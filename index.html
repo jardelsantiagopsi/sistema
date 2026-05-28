@@ -256,6 +256,52 @@
     .table th,.table td{font-size:12px;padding:10px 8px;}
     .list-item{padding:12px;}
   }
+
+  /* NOTIFICATION BELL */
+  .notif-wrap{position:relative;}
+  .notif-btn{background:none;border:none;cursor:pointer;padding:6px;color:var(--text2);font-size:17px;transition:color .15s;border-radius:var(--radius-sm);line-height:1;}
+  .notif-btn:hover{color:var(--text);}
+  .notif-badge{position:absolute;top:0;right:0;background:var(--accent3);color:#fff;font-size:9px;font-weight:700;min-width:15px;height:15px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 3px;pointer-events:none;}
+  .notif-badge.hidden{display:none;}
+  .notif-dropdown{position:absolute;top:calc(100% + 6px);right:-8px;width:290px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);z-index:500;box-shadow:0 8px 24px rgba(0,0,0,.45);overflow:hidden;}
+  .notif-hdr{padding:10px 14px;border-bottom:1px solid var(--border);font-size:11px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;}
+  .notif-item{padding:11px 14px;border-bottom:1px solid var(--border);font-size:12.5px;line-height:1.45;cursor:pointer;transition:background .15s;}
+  .notif-item:hover{background:var(--surface3);}
+  .notif-item:last-child{border-bottom:none;}
+  .notif-type{font-size:10.5px;color:var(--text3);margin-bottom:2px;}
+  .notif-empty{padding:18px 14px;text-align:center;color:var(--text3);font-size:13px;}
+
+  /* SEARCH & FILTER */
+  .search-bar{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
+  .search-input{flex:1;min-width:180px;padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13.5px;outline:none;transition:border-color .2s;}
+  .search-input:focus{border-color:var(--accent);}
+  .status-tabs{display:flex;gap:4px;margin-bottom:14px;flex-wrap:wrap;}
+  .status-tab{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
+  .status-tab:hover{border-color:var(--border2);color:var(--text);}
+  .status-tab.active{background:rgba(196,168,130,.15);border-color:var(--accent);color:var(--accent);}
+  .filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center;}
+  .filter-select{padding:7px 11px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:12.5px;outline:none;cursor:pointer;}
+  .filter-select:focus{border-color:var(--accent);}
+
+  /* STATUS */
+  .badge-inactive{background:rgba(90,82,72,.2);color:var(--text3);}
+
+  /* PANORAMA CLÍNICO */
+  .panorama-table{width:100%;border-collapse:collapse;}
+  .panorama-table th{text-align:left;padding:8px 10px;font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border);}
+  .panorama-table td{padding:11px 10px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
+  .panorama-table tr:last-child td{border-bottom:none;}
+  .panorama-table tr.alerta-row td{background:rgba(224,123,106,.05);}
+  .delta-up{color:var(--accent3);font-weight:500;font-size:12px;}
+  .delta-down{color:var(--accent2);font-weight:500;font-size:12px;}
+  .delta-stable{color:var(--text3);font-size:12px;}
+
+  /* PRINT / PDF */
+  @media print{
+    body>*:not(#pdf-print-area){display:none!important;}
+    #pdf-print-area{display:block!important;}
+  }
+  #pdf-print-area{display:none;}
 </style>
 </head>
 <body>
@@ -283,9 +329,15 @@
   <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
   <aside class="sidebar">
-    <div class="sidebar-header">
-      <div class="sidebar-brand">Clínica</div>
-      <div class="sidebar-tag">Jardel Santiago</div>
+    <div class="sidebar-header" style="display:flex;align-items:flex-start;justify-content:space-between;">
+      <div>
+        <div class="sidebar-brand">Clínica</div>
+        <div class="sidebar-tag">Jardel Santiago</div>
+      </div>
+      <div class="notif-wrap">
+        <button class="notif-btn" id="btn-notif" title="Notificações">🔔<span class="notif-badge hidden" id="notif-badge">0</span></button>
+        <div class="notif-dropdown" id="notif-dropdown" style="display:none;"></div>
+      </div>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section-label">Visão geral</div>
@@ -316,6 +368,10 @@
         <div class="stat-card"><div class="stat-label">Escalas disponíveis</div><div class="stat-value" id="stat-escalas">0</div><div class="stat-sub">na biblioteca</div></div>
         <div class="stat-card"><div class="stat-label">Respostas</div><div class="stat-value" id="stat-respostas">0</div><div class="stat-sub">recebidas</div></div>
       </div>
+      <div id="dash-alertas-card" style="display:none;" class="card">
+        <div class="card-title" style="color:var(--accent3);">⚠ Atenção clínica</div>
+        <div id="dash-alertas-list"></div>
+      </div>
       <div class="grid-2">
         <div class="card"><div class="card-title">Pacientes recentes</div><div id="dash-pacientes-list"></div></div>
         <div class="card"><div class="card-title">Últimas respostas</div><div id="dash-respostas-list"></div></div>
@@ -328,9 +384,17 @@
         <button class="btn btn-accent" id="btn-novo-paciente">+ Novo paciente</button>
       </div>
       <div class="card">
+        <div class="search-bar">
+          <input type="search" class="search-input" id="busca-paciente" placeholder="Buscar por nome...">
+        </div>
+        <div class="status-tabs">
+          <button class="status-tab active" data-status="todos">Todos</button>
+          <button class="status-tab" data-status="ativo">Ativos</button>
+          <button class="status-tab" data-status="inativo">Inativos</button>
+        </div>
         <div class="table-wrapper">
           <table class="table">
-            <thead><tr><th>Nome</th><th>Adicionado em</th><th>Respostas</th><th>Status</th><th>Ações</th></tr></thead>
+            <thead><tr><th data-sort="nome" style="cursor:pointer">Nome ↕</th><th data-sort="data" style="cursor:pointer">Adicionado ↕</th><th>Respostas</th><th>Status</th><th>Ações</th></tr></thead>
             <tbody id="pacientes-tbody"><tr><td colspan="5" class="loading">Carregando...</td></tr></tbody>
           </table>
         </div>
@@ -341,10 +405,24 @@
       <button class="back-btn" data-page="pacientes">← Voltar</button>
       <div class="patient-header">
         <div class="patient-avatar" id="detalhe-avatar">J</div>
-        <div style="flex:1;min-width:200px"><div class="page-title" id="detalhe-nome">Paciente</div><div class="page-sub" id="detalhe-info">—</div></div>
-        <div style="display:flex;gap:10px;">
+        <div style="flex:1;min-width:200px">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <div class="page-title" id="detalhe-nome">Paciente</div>
+            <span id="detalhe-status-badge" class="badge badge-green" style="cursor:pointer;user-select:none" title="Clique para alternar">ativo</span>
+          </div>
+          <div class="page-sub" id="detalhe-info">—</div>
+          <div id="detalhe-dados-pessoais" style="display:flex;gap:14px;flex-wrap:wrap;margin-top:6px;font-size:12px;color:var(--text2);"></div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm" id="btn-pdf-detalhe">📄 PDF</button>
+          <button class="btn btn-green btn-sm" id="btn-wpp-detalhe" style="display:none">💬 WhatsApp</button>
           <button class="btn btn-accent btn-sm" id="btn-enviar-escala-detalhe">📋 Enviar escala</button>
         </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Panorama clínico <span class="card-subtitle">comparativo de todas as escalas</span></div>
+        <div id="detalhe-panorama"></div>
       </div>
 
       <div class="card">
@@ -375,7 +453,16 @@
 
     <div class="page" id="page-respostas">
       <div class="page-header"><div><div class="page-title">Respostas</div><div class="page-sub">Todas as respostas recebidas</div></div></div>
-      <div class="card"><div id="respostas-list"><div class="loading">Carregando...</div></div></div>
+      <div class="card">
+        <div class="filter-row">
+          <select class="filter-select" id="filtro-resp-paciente"><option value="">Todos os pacientes</option></select>
+          <select class="filter-select" id="filtro-resp-escala"><option value="">Todas as escalas</option></select>
+          <input type="date" class="filter-select" id="filtro-resp-de" title="Data início">
+          <input type="date" class="filter-select" id="filtro-resp-ate" title="Data fim">
+          <button class="btn btn-ghost btn-sm" id="btn-limpar-filtros">Limpar</button>
+        </div>
+        <div id="respostas-list"><div class="loading">Carregando...</div></div>
+      </div>
     </div>
   </main>
 </div>
@@ -384,6 +471,10 @@
   <div class="modal">
     <div class="modal-title">Novo Paciente</div>
     <div class="form-group"><label class="form-label">Nome completo</label><input type="text" class="form-input" id="np-nome" placeholder="Nome do paciente"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="form-group"><label class="form-label">Telefone / WhatsApp</label><input type="tel" class="form-input" id="np-telefone" placeholder="(11) 99999-9999"></div>
+      <div class="form-group"><label class="form-label">Data de nascimento</label><input type="date" class="form-input" id="np-nascimento"></div>
+    </div>
     <div class="form-group"><label class="form-label">Observações internas (opcional)</label><textarea class="form-textarea" id="np-obs" placeholder="Diagnóstico, notas clínicas..."></textarea></div>
     <div class="modal-footer">
       <button class="btn btn-ghost" data-close="modal-novo-paciente">Cancelar</button>
@@ -436,7 +527,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, serverTimestamp }
+import { getFirestore, collection, addDoc, deleteDoc, updateDoc, doc, onSnapshot, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 import { ESCALAS, CATEGORIAS, escalasPorCategoria, getEscalaById } from './escalas.js';
 
@@ -462,6 +553,14 @@ let cachedPacientes = [];
 let cachedEscalas = [];
 let cachedRespostas = [];
 let filtroCategoria = 'todas';
+let filtroStatus = 'todos';
+let buscaPaciente = '';
+let sortPacientes = {campo:'data',dir:-1};
+let filtroRespPaciente = '';
+let filtroRespEscala = '';
+let filtroRespDe = '';
+let filtroRespAte = '';
+let notifVisto = parseFloat(localStorage.getItem('notif-visto') || '0');
 
 const $ = id => document.getElementById(id);
 function fmtDate(ts) {
@@ -579,9 +678,59 @@ function initAll() {
   $('btn-salvar-escala').addEventListener('click', salvarEscala);
   $('btn-gerar-escala-link').addEventListener('click', gerarEscalaLink);
   $('btn-copiar-escala-link').addEventListener('click', () => navigator.clipboard.writeText(currentEscalaLinkUrl).then(() => toast('Link copiado!')));
-  $('btn-wpp-escala').addEventListener('click', () => window.open(`https://wa.me/?text=${encodeURIComponent('Olá! Por favor responda este questionário:\n'+currentEscalaLinkUrl)}`,'_blank'));
+  $('btn-wpp-escala').addEventListener('click', () => {
+    const pac = currentPacienteId ? cachedPacientes.find(p=>p.id===currentPacienteId) : null;
+    const num = pac?.telefone ? pac.telefone.replace(/\D/g,'') : '';
+    const texto = encodeURIComponent('Olá! Por favor responda este questionário:\n'+currentEscalaLinkUrl);
+    const url = num ? `https://wa.me/55${num}?text=${texto}` : `https://wa.me/?text=${texto}`;
+    window.open(url,'_blank');
+  });
 
   $('enviar-categoria-select').addEventListener('change', popularEscalasDoSelect);
+
+  // Notification bell
+  $('btn-notif').addEventListener('click', () => {
+    const dd = $('notif-dropdown');
+    const isOpen = dd.style.display !== 'none';
+    dd.style.display = isOpen ? 'none' : 'block';
+    if (!isOpen) {
+      renderNotifDropdown();
+      notifVisto = Date.now() / 1000;
+      localStorage.setItem('notif-visto', notifVisto);
+      updateNotifBadge();
+    }
+  });
+  document.addEventListener('click', e => {
+    if (!$('btn-notif').contains(e.target) && !$('notif-dropdown').contains(e.target)) $('notif-dropdown').style.display='none';
+  });
+
+  // Search & sort - pacientes
+  $('busca-paciente').addEventListener('input', e => { buscaPaciente=e.target.value.toLowerCase(); renderPacientes(); });
+  document.querySelectorAll('.status-tab[data-status]').forEach(b=>b.addEventListener('click',()=>{
+    filtroStatus=b.dataset.status;
+    document.querySelectorAll('.status-tab[data-status]').forEach(x=>x.classList.toggle('active',x===b));
+    renderPacientes();
+  }));
+  document.querySelectorAll('th[data-sort]').forEach(th=>th.addEventListener('click',()=>{
+    if(sortPacientes.campo===th.dataset.sort) sortPacientes.dir*=-1;
+    else sortPacientes={campo:th.dataset.sort,dir:1};
+    renderPacientes();
+  }));
+
+  // Filters - respostas
+  $('filtro-resp-paciente').addEventListener('change',e=>{filtroRespPaciente=e.target.value;renderRespostas();});
+  $('filtro-resp-escala').addEventListener('change',e=>{filtroRespEscala=e.target.value;renderRespostas();});
+  $('filtro-resp-de').addEventListener('change',e=>{filtroRespDe=e.target.value;renderRespostas();});
+  $('filtro-resp-ate').addEventListener('change',e=>{filtroRespAte=e.target.value;renderRespostas();});
+  $('btn-limpar-filtros').addEventListener('click',()=>{
+    filtroRespPaciente='';filtroRespEscala='';filtroRespDe='';filtroRespAte='';
+    ['filtro-resp-paciente','filtro-resp-escala','filtro-resp-de','filtro-resp-ate'].forEach(id=>{$(id).value='';});
+    renderRespostas();
+  });
+
+  // Patient detail extra buttons
+  $('btn-pdf-detalhe').addEventListener('click', exportarPDF);
+  $('btn-wpp-detalhe').addEventListener('click', abrirEnviarEscala);
 
   onSnapshot(collection(db,'pacientes'), snap => {
     cachedPacientes = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0));
@@ -623,6 +772,25 @@ function updateStats() {
 }
 
 function renderDashboard() {
+  // Alertas clínicos
+  const alertas = calcularAlertas();
+  const alertasCard = $('dash-alertas-card');
+  if (alertas.length) {
+    alertasCard.style.display = 'block';
+    $('dash-alertas-list').innerHTML = alertas.slice(0,5).map(a=>`
+      <div class="list-item" data-nav="paciente-detalhe" data-id="${a.pacienteId}" style="cursor:pointer;">
+        <div class="list-item-header">
+          <span style="color:var(--accent3);font-weight:500;">⚠ ${a.nomePaciente}</span>
+          <span class="badge badge-red">${a.escala}</span>
+        </div>
+        <div style="font-size:12px;color:var(--text3)">${a.descricao}</div>
+      </div>`).join('');
+    $('dash-alertas-list').querySelectorAll('[data-nav]').forEach(el=>el.addEventListener('click',()=>navigate(el.dataset.nav,el.dataset.id)));
+  } else {
+    alertasCard.style.display = 'none';
+  }
+  updateNotifBadge();
+
   const pl = $('dash-pacientes-list');
   if (!cachedPacientes.length) { pl.innerHTML='<div class="empty-state"><div class="empty-state-icon">◉</div><div class="empty-state-text">Nenhum paciente ainda</div></div>'; }
   else {
@@ -644,10 +812,28 @@ function renderDashboard() {
 
 function renderPacientes() {
   const tbody = $('pacientes-tbody');
-  if (!cachedPacientes.length) { tbody.innerHTML='<tr><td colspan="5"><div class="empty-state"><div class="empty-state-icon">◉</div><div class="empty-state-text">Nenhum paciente. Crie o primeiro!</div></div></td></tr>'; return; }
-  tbody.innerHTML = cachedPacientes.map(p=>{
+  let lista = [...cachedPacientes];
+  if (buscaPaciente) lista = lista.filter(p => p.nome.toLowerCase().includes(buscaPaciente));
+  if (filtroStatus !== 'todos') lista = lista.filter(p => (p.status||'ativo') === filtroStatus);
+  lista.sort((a,b) => {
+    if (sortPacientes.campo === 'nome') return sortPacientes.dir * a.nome.localeCompare(b.nome,'pt-BR');
+    return sortPacientes.dir * ((b.criadoEm?.seconds||0) - (a.criadoEm?.seconds||0));
+  });
+  if (!lista.length) { tbody.innerHTML='<tr><td colspan="5"><div class="empty-state"><div class="empty-state-icon">◉</div><div class="empty-state-text">Nenhum paciente encontrado.</div></div></td></tr>'; return; }
+  tbody.innerHTML = lista.map(p=>{
     const nResp=cachedRespostas.filter(r=>r.pacienteId===p.id).length;
-    return `<tr><td class="name">${p.nome}</td><td>${fmtDate(p.criadoEm)}</td><td>${nResp}</td><td><span class="badge badge-green">ativo</span></td><td><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm" data-nav="paciente-detalhe" data-id="${p.id}">Ver</button><button class="btn btn-danger btn-sm" data-del="${p.id}">✕</button></div></td></tr>`;
+    const status = p.status||'ativo';
+    const idade = calcularIdade(p.dataNascimento);
+    return `<tr>
+      <td class="name">${p.nome}${idade!==null?`<span style="font-size:11px;color:var(--text3);margin-left:8px">${idade}a</span>`:''}</td>
+      <td>${fmtDate(p.criadoEm)}</td>
+      <td>${nResp}</td>
+      <td><span class="badge ${status==='ativo'?'badge-green':'badge-inactive'}">${status}</span></td>
+      <td><div style="display:flex;gap:6px;">
+        <button class="btn btn-ghost btn-sm" data-nav="paciente-detalhe" data-id="${p.id}">Ver</button>
+        <button class="btn btn-danger btn-sm" data-del="${p.id}">✕</button>
+      </div></td>
+    </tr>`;
   }).join('');
   tbody.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.nav,b.dataset.id)));
   tbody.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>excluirPaciente(b.dataset.del)));
@@ -656,9 +842,16 @@ function renderPacientes() {
 async function criarPaciente() {
   const nome = $('np-nome').value.trim();
   if (!nome) { toast('Digite o nome do paciente'); return; }
-  await addDoc(collection(db,'pacientes'),{nome, obs:$('np-obs').value.trim(), criadoEm:serverTimestamp()});
+  await addDoc(collection(db,'pacientes'), {
+    nome,
+    obs: $('np-obs').value.trim(),
+    telefone: $('np-telefone').value.trim(),
+    dataNascimento: $('np-nascimento').value || null,
+    status: 'ativo',
+    criadoEm: serverTimestamp()
+  });
   closeModal('modal-novo-paciente');
-  $('np-nome').value=''; $('np-obs').value='';
+  $('np-nome').value=''; $('np-obs').value=''; $('np-telefone').value=''; $('np-nascimento').value='';
   toast('Paciente criado!');
 }
 
@@ -685,6 +878,25 @@ function renderPacienteDetalhe(id) {
   $('detalhe-avatar').textContent = pac.nome[0].toUpperCase();
   $('detalhe-nome').textContent = pac.nome;
   $('detalhe-info').textContent = pac.obs || 'Sem observações';
+
+  // Dados pessoais
+  const dadosItems = [];
+  const idade = calcularIdade(pac.dataNascimento);
+  if (idade !== null) dadosItems.push(`<span>📅 ${idade} anos</span>`);
+  if (pac.telefone) dadosItems.push(`<a href="tel:${pac.telefone}" style="color:var(--accent2);text-decoration:none;">📱 ${pac.telefone}</a>`);
+  $('detalhe-dados-pessoais').innerHTML = dadosItems.join('');
+
+  // Status badge
+  const statusAtual = pac.status || 'ativo';
+  const sb = $('detalhe-status-badge');
+  sb.textContent = statusAtual;
+  sb.className = `badge ${statusAtual==='ativo'?'badge-green':'badge-inactive'}`;
+  sb.onclick = () => toggleStatusPaciente(id, statusAtual);
+
+  // WhatsApp button
+  $('btn-wpp-detalhe').style.display = pac.telefone ? 'inline-flex' : 'none';
+
+  renderPanoramaClinico(id);
 
   const resps = cachedRespostas.filter(r=>r.pacienteId===id);
 
@@ -995,9 +1207,25 @@ function gerarEscalaLink() {
 }
 
 function renderRespostas() {
+  // Populate filter dropdowns
+  const selPac = $('filtro-resp-paciente');
+  const selEsc = $('filtro-resp-escala');
+  const prevPac = selPac.value;
+  const prevEsc = selEsc.value;
+  const pacComResp = [...new Set(cachedRespostas.map(r=>r.pacienteId))].map(id=>cachedPacientes.find(p=>p.id===id)).filter(Boolean);
+  selPac.innerHTML = '<option value="">Todos os pacientes</option>'+pacComResp.map(p=>`<option value="${p.id}" ${prevPac===p.id?'selected':''}>${p.nome}</option>`).join('');
+  const escalasUnicas = [...new Map(cachedRespostas.map(r=>[r.escalaId,r.escalaNome])).entries()];
+  selEsc.innerHTML = '<option value="">Todas as escalas</option>'+escalasUnicas.map(([id,nome])=>`<option value="${id}" ${prevEsc===id?'selected':''}>${nome}</option>`).join('');
+
+  let lista = [...cachedRespostas];
+  if (filtroRespPaciente) lista = lista.filter(r=>r.pacienteId===filtroRespPaciente);
+  if (filtroRespEscala) lista = lista.filter(r=>r.escalaId===filtroRespEscala);
+  if (filtroRespDe) lista = lista.filter(r=>{const d=r.criadoEm?.toDate?.()?.toISOString().slice(0,10);return d&&d>=filtroRespDe;});
+  if (filtroRespAte) lista = lista.filter(r=>{const d=r.criadoEm?.toDate?.()?.toISOString().slice(0,10);return d&&d<=filtroRespAte;});
+
   const div=$('respostas-list');
-  if (!cachedRespostas.length){div.innerHTML='<div class="empty-state"><div class="empty-state-icon">◌</div><div class="empty-state-text">Nenhuma resposta ainda</div></div>';return;}
-  div.innerHTML=cachedRespostas.map(r=>{
+  if (!lista.length){div.innerHTML='<div class="empty-state"><div class="empty-state-icon">◌</div><div class="empty-state-text">Nenhuma resposta encontrada</div></div>';return;}
+  div.innerHTML=lista.map(r=>{
     const pac=cachedPacientes.find(p=>p.id===r.pacienteId);
     const ins = obterInsight(r);
     return `<div class="list-item" data-resp="${r.id}">
@@ -1033,6 +1261,185 @@ function verResposta(id) {
       </div>`;
     }).join('')}`;
   openModal('modal-ver-resposta');
+}
+
+// ════ HELPERS ════
+function calcularIdade(dataNascimento) {
+  if (!dataNascimento) return null;
+  const hoje = new Date();
+  const nasc = new Date(dataNascimento + 'T00:00:00');
+  let idade = hoje.getFullYear() - nasc.getFullYear();
+  const m = hoje.getMonth() - nasc.getMonth();
+  if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) idade--;
+  return idade;
+}
+
+// ════ STATUS ════
+async function toggleStatusPaciente(id, statusAtual) {
+  const novoStatus = statusAtual === 'ativo' ? 'inativo' : 'ativo';
+  await updateDoc(doc(db,'pacientes',id), {status: novoStatus});
+  toast(`Paciente marcado como ${novoStatus}`);
+}
+
+// ════ ALERTAS CLÍNICOS ════
+function calcularAlertas() {
+  const alertas = [];
+  const corOrder = {green:0, amber:1, red:2};
+  cachedPacientes.forEach(pac => {
+    const resps = cachedRespostas.filter(r => r.pacienteId === pac.id);
+    const porEscala = {};
+    resps.forEach(r => { if (!porEscala[r.escalaId]) porEscala[r.escalaId]=[]; porEscala[r.escalaId].push(r); });
+    Object.values(porEscala).forEach(lista => {
+      if (lista.length < 2) return;
+      const sorted = [...lista].sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0));
+      const atual = sorted[0]; const anterior = sorted[1];
+      const insAtual = obterInsight(atual); const insAnterior = obterInsight(anterior);
+      if (!insAtual || !insAnterior) return;
+      const diff = (corOrder[insAtual.cor]||0) - (corOrder[insAnterior.cor]||0);
+      if (diff > 0) {
+        alertas.push({nomePaciente:pac.nome, pacienteId:pac.id, escala:atual.escalaNome, descricao:`${insAnterior.nivel} → ${insAtual.nivel}`});
+      } else if (insAtual.max && Math.abs(insAtual.pontos - insAnterior.pontos) >= insAtual.max * 0.15) {
+        const dir = insAtual.pontos > insAnterior.pontos ? 'piora' : 'melhora';
+        alertas.push({nomePaciente:pac.nome, pacienteId:pac.id, escala:atual.escalaNome, descricao:`Variação de ${Math.abs(insAtual.pontos-insAnterior.pontos)} pts (${dir})`});
+      }
+    });
+  });
+  return alertas;
+}
+
+// ════ PANORAMA CLÍNICO ════
+function renderPanoramaClinico(id) {
+  const resps = cachedRespostas.filter(r => r.pacienteId === id);
+  const div = $('detalhe-panorama');
+  if (!resps.length) { div.innerHTML='<div class="empty-state" style="padding:20px"><div class="empty-state-text" style="font-size:13px">Nenhuma escala respondida ainda.</div></div>'; return; }
+  const porEscala = {};
+  resps.forEach(r => { if (!porEscala[r.escalaId]) porEscala[r.escalaId]=[]; porEscala[r.escalaId].push(r); });
+  const linhas = Object.values(porEscala).map(lista => {
+    const sorted = [...lista].sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0));
+    const atual = sorted[0]; const anterior = sorted[1]||null;
+    const insAtual = obterInsight(atual); const insAnterior = anterior ? obterInsight(anterior) : null;
+    let delta = ''; let isAlerta = false;
+    const corOrder = {green:0,amber:1,red:2};
+    if (insAtual && insAnterior) {
+      const diff = insAtual.pontos - insAnterior.pontos;
+      if ((corOrder[insAtual.cor]||0) > (corOrder[insAnterior.cor]||0)) isAlerta = true;
+      if (insAtual.max && Math.abs(diff) >= insAtual.max * 0.15) isAlerta = true;
+      if (Math.abs(diff) < 1) delta = `<span class="delta-stable">→ estável</span>`;
+      else if (diff > 0) delta = `<span class="delta-up">↑ +${diff}</span>`;
+      else delta = `<span class="delta-down">↓ ${diff}</span>`;
+    } else if (anterior && atual.pontuacao != null && anterior.pontuacao != null) {
+      const diff = atual.pontuacao - anterior.pontuacao;
+      if (diff !== 0) delta = diff > 0 ? `<span class="delta-up">↑ +${diff}</span>` : `<span class="delta-down">↓ ${diff}</span>`;
+    }
+    const badgeCor = insAtual ? `badge-${insAtual.cor}` : 'badge-amber';
+    const nivel = insAtual ? insAtual.nivel : (atual.pontuacao!=null ? `Pont. ${atual.pontuacao}` : '—');
+    const pontuacao = insAtual ? `${insAtual.pontos}${insAtual.max?' / '+insAtual.max:''}` : (atual.pontuacao!=null ? atual.pontuacao : '—');
+    return `<tr class="${isAlerta?'alerta-row':''}">
+      <td style="color:var(--text)">${isAlerta?'<span style="color:var(--accent3)">⚠</span> ':''}<strong>${atual.escalaNome}</strong></td>
+      <td><span class="badge ${badgeCor}">${nivel}</span></td>
+      <td style="color:var(--text2)">${pontuacao}</td>
+      <td>${delta}</td>
+      <td style="color:var(--text3);font-size:12px">${fmtDate(atual.criadoEm)}</td>
+    </tr>`;
+  }).join('');
+  div.innerHTML = `<div class="table-wrapper"><table class="panorama-table">
+    <thead><tr><th>Escala</th><th>Nível atual</th><th>Pontuação</th><th>Variação</th><th>Última resposta</th></tr></thead>
+    <tbody>${linhas}</tbody>
+  </table></div>`;
+}
+
+// ════ NOTIFICAÇÕES ════
+function updateNotifBadge() {
+  const badge = $('notif-badge');
+  if (!badge) return;
+  const newRespostas = cachedRespostas.filter(r=>(r.criadoEm?.seconds||0) > notifVisto).length;
+  const alertas = calcularAlertas().length;
+  const total = newRespostas + alertas;
+  if (total > 0) { badge.textContent = total > 9 ? '9+' : total; badge.classList.remove('hidden'); }
+  else { badge.classList.add('hidden'); }
+}
+
+function renderNotifDropdown() {
+  const dd = $('notif-dropdown');
+  const newRespostas = cachedRespostas.filter(r=>(r.criadoEm?.seconds||0) > notifVisto);
+  const alertas = calcularAlertas();
+  let html = '<div class="notif-hdr">Notificações</div>';
+  if (!newRespostas.length && !alertas.length) {
+    html += '<div class="notif-empty">Tudo em dia ✓</div>';
+  } else {
+    newRespostas.slice(0,5).forEach(r=>{
+      const pac = cachedPacientes.find(p=>p.id===r.pacienteId);
+      html += `<div class="notif-item" data-nav="paciente-detalhe" data-id="${pac?.id||''}"><div class="notif-type">📋 Nova resposta</div><div style="color:var(--text)">${pac?.nome||'Paciente'} — ${r.escalaNome}</div><div style="font-size:11px;color:var(--text3)">${fmtDate(r.criadoEm)}</div></div>`;
+    });
+    alertas.slice(0,5).forEach(a=>{
+      html += `<div class="notif-item" data-nav="paciente-detalhe" data-id="${a.pacienteId}"><div class="notif-type" style="color:var(--accent3)">⚠ Alerta clínico</div><div style="color:var(--text)">${a.nomePaciente} — ${a.escala}</div><div style="font-size:11px;color:var(--text3)">${a.descricao}</div></div>`;
+    });
+  }
+  dd.innerHTML = html;
+  dd.querySelectorAll('[data-nav]').forEach(el=>el.addEventListener('click',()=>{
+    if(el.dataset.id){ navigate(el.dataset.nav,el.dataset.id); $('notif-dropdown').style.display='none'; }
+  }));
+}
+
+// ════ EXPORTAR PDF ════
+function exportarPDF() {
+  const pac = cachedPacientes.find(p=>p.id===currentPacienteId);
+  if (!pac) return;
+  const idade = calcularIdade(pac.dataNascimento);
+  const resps = cachedRespostas.filter(r=>r.pacienteId===currentPacienteId);
+  const porEscala = {};
+  resps.forEach(r=>{ if(!porEscala[r.escalaId]) porEscala[r.escalaId]=[]; porEscala[r.escalaId].push(r); });
+  const panoramaRows = Object.values(porEscala).map(lista=>{
+    const sorted = [...lista].sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0));
+    const atual = sorted[0]; const ins = obterInsight(atual);
+    const nivel = ins ? ins.nivel : (atual.pontuacao!=null ? atual.pontuacao : '—');
+    const ponts = ins ? `${ins.pontos}${ins.max?' / '+ins.max:''}` : (atual.pontuacao!=null ? atual.pontuacao : '—');
+    const cor = ins?.cor==='red'?'#c0392b':ins?.cor==='amber'?'#a67c00':'#2e7d52';
+    return `<tr style="border-bottom:1px solid #eee;"><td style="padding:5px 8px;">${atual.escalaNome}</td><td style="padding:5px 8px;color:${cor};font-weight:500;">${nivel}</td><td style="padding:5px 8px;">${ponts}</td><td style="padding:5px 8px;font-size:11px;">${fmtDate(atual.criadoEm)}</td></tr>`;
+  }).join('');
+  const svgs = Array.from(document.querySelectorAll('#detalhe-graficos .chart-card')).map(c=>{
+    const title = c.querySelector('.chart-title')?.textContent||'';
+    return `<div style="margin-bottom:20px;"><div style="font-size:13px;font-weight:600;margin-bottom:6px;">${title}</div>${c.querySelector('svg')?.outerHTML||''}</div>`;
+  }).join('');
+  const old = document.getElementById('pdf-print-area');
+  if (old) document.body.removeChild(old);
+  const area = document.createElement('div');
+  area.id = 'pdf-print-area';
+  area.style.cssText = 'display:none;font-family:Arial,sans-serif;max-width:800px;margin:0 auto;padding:32px;color:#111;background:#fff;';
+  area.innerHTML = `
+    <div style="border-bottom:2px solid #333;padding-bottom:16px;margin-bottom:24px;">
+      <h1 style="font-size:22px;margin:0 0 6px;">${pac.nome}</h1>
+      <div style="font-size:13px;color:#555;display:flex;gap:20px;flex-wrap:wrap;">
+        ${idade!==null?`<span>Idade: ${idade} anos</span>`:''}
+        ${pac.dataNascimento?`<span>Nascimento: ${new Date(pac.dataNascimento+'T00:00:00').toLocaleDateString('pt-BR')}</span>`:''}
+        ${pac.telefone?`<span>Telefone: ${pac.telefone}</span>`:''}
+        <span>Gerado em: ${new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}</span>
+      </div>
+      ${pac.obs?`<div style="margin-top:8px;font-size:13px;font-style:italic;color:#444;">${pac.obs}</div>`:''}
+    </div>
+    <h2 style="font-size:15px;margin-bottom:10px;border-bottom:1px solid #ccc;padding-bottom:6px;">Panorama Clínico</h2>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:28px;font-size:13px;">
+      <thead><tr style="border-bottom:2px solid #ccc;background:#f9f9f9;">
+        <th style="text-align:left;padding:6px 8px;">Escala</th>
+        <th style="text-align:left;padding:6px 8px;">Nível</th>
+        <th style="text-align:left;padding:6px 8px;">Pontuação</th>
+        <th style="text-align:left;padding:6px 8px;">Data</th>
+      </tr></thead>
+      <tbody>${panoramaRows}</tbody>
+    </table>
+    ${svgs?`<h2 style="font-size:15px;margin-bottom:10px;border-bottom:1px solid #ccc;padding-bottom:6px;">Gráficos de Evolução</h2><div style="margin-bottom:28px;">${svgs}</div>`:''}
+    <h2 style="font-size:15px;margin-bottom:10px;border-bottom:1px solid #ccc;padding-bottom:6px;">Histórico de Respostas</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <thead><tr style="border-bottom:2px solid #ccc;background:#f9f9f9;">
+        <th style="text-align:left;padding:5px 8px;">Escala</th>
+        <th style="text-align:left;padding:5px 8px;">Pontuação</th>
+        <th style="text-align:left;padding:5px 8px;">Data</th>
+      </tr></thead>
+      <tbody>${resps.map(r=>{const ins=obterInsight(r);return`<tr style="border-bottom:1px solid #eee;"><td style="padding:5px 8px;">${r.escalaNome}</td><td style="padding:5px 8px;">${ins?`${ins.pontos}${ins.max?' / '+ins.max:''}`:r.pontuacao??'—'}</td><td style="padding:5px 8px;font-size:11px;">${fmtDate(r.criadoEm)}</td></tr>`;}).join('')}</tbody>
+    </table>`;
+  document.body.appendChild(area);
+  window.print();
+  setTimeout(()=>{ const el=document.getElementById('pdf-print-area'); if(el) document.body.removeChild(el); },800);
 }
 
 if ('serviceWorker' in navigator) {
