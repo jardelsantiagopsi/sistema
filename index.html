@@ -155,6 +155,17 @@
   .chart-tooltip{position:absolute;background:var(--surface3);border:1px solid var(--border2);border-radius:6px;padding:6px 10px;font-size:11px;color:var(--text);pointer-events:none;opacity:0;transition:opacity .15s;white-space:nowrap;z-index:50;}
   .chart-tooltip.show{opacity:1;}
 
+  /* BUSCA DE ESCALAS */
+  .escala-busca-wrap{position:relative;margin-bottom:16px;}
+  .escala-busca-wrap input{width:100%;padding:9px 36px 9px 36px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;box-sizing:border-box;transition:border-color .15s;}
+  .escala-busca-wrap input:focus{outline:none;border-color:var(--accent);}
+  .escala-busca-wrap input::placeholder{color:var(--text3);}
+  .escala-busca-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:14px;pointer-events:none;}
+  .escala-busca-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;display:none;padding:2px 4px;line-height:1;}
+  .escala-busca-clear.show{display:block;}
+  .escala-busca-resultado{font-size:12px;color:var(--text3);margin-bottom:12px;}
+  .escala-busca-resultado strong{color:var(--accent);}
+
   /* CATEGORIA FILTRO */
   .categoria-filtros{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
   .categoria-filtro{padding:6px 12px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;}
@@ -449,6 +460,12 @@
         <button class="btn btn-accent" id="btn-nova-escala">+ Nova escala personalizada</button>
       </div>
 
+      <div class="escala-busca-wrap">
+        <span class="escala-busca-icon">🔍</span>
+        <input type="text" id="busca-escala" placeholder="Buscar por nome, construto ou categoria… ex: depressão, autoestima, burnout">
+        <button class="escala-busca-clear" id="busca-escala-clear" title="Limpar">✕</button>
+      </div>
+      <div id="busca-escala-resultado" class="escala-busca-resultado" style="display:none"></div>
       <div class="categoria-filtros" id="categoria-filtros"></div>
       <div id="escalas-conteudo"></div>
     </div>
@@ -752,6 +769,8 @@ function initAll() {
   $('btn-editar-paciente-detalhe').addEventListener('click', () => abrirEditarPaciente(currentPacienteId));
   $('btn-salvar-edicao').addEventListener('click', editarPaciente);
   $('btn-wpp-detalhe').addEventListener('click', abrirEnviarEscala);
+  $('busca-escala').addEventListener('input', renderEscalas);
+  $('busca-escala-clear').addEventListener('click', () => { $('busca-escala').value = ''; renderEscalas(); $('busca-escala').focus(); });
 
   onSnapshot(collection(db,'pacientes'), snap => {
     cachedPacientes = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0));
@@ -1057,26 +1076,55 @@ function renderGrafico(dados) {
 
 // ════ ESCALAS — BIBLIOTECA ════
 function renderEscalas() {
-  // Filtros de categoria
-  const filtrosDiv = $('categoria-filtros');
   const grupos = escalasPorCategoria();
   const customizadas = cachedEscalas.length ? [{ id:'personalizada', nome:'Minhas escalas', icone:'★', ordem:99, escalas: cachedEscalas }] : [];
   const todasCategorias = [...grupos, ...customizadas].filter(g => g.escalas.length > 0);
 
-  filtrosDiv.innerHTML = `<button class="categoria-filtro ${filtroCategoria==='todas'?'active':''}" data-cat="todas">Todas</button>` +
-    todasCategorias.map(g => `<button class="categoria-filtro ${filtroCategoria===g.id?'active':''}" data-cat="${g.id}">${g.nome} <span style="opacity:.6">${g.escalas.length}</span></button>`).join('');
+  const query = ($('busca-escala')?.value || '').trim().toLowerCase();
+  const buscando = query.length > 0;
 
-  filtrosDiv.querySelectorAll('[data-cat]').forEach(b => b.addEventListener('click', () => {
-    filtroCategoria = b.dataset.cat;
-    renderEscalas();
-  }));
+  // Botão limpar busca
+  const clearBtn = $('busca-escala-clear');
+  if (clearBtn) clearBtn.classList.toggle('show', buscando);
 
-  // Conteúdo
+  // Filtros de categoria (ocultar durante busca)
+  const filtrosDiv = $('categoria-filtros');
+  filtrosDiv.style.display = buscando ? 'none' : '';
+  if (!buscando) {
+    filtrosDiv.innerHTML = `<button class="categoria-filtro ${filtroCategoria==='todas'?'active':''}" data-cat="todas">Todas</button>` +
+      todasCategorias.map(g => `<button class="categoria-filtro ${filtroCategoria===g.id?'active':''}" data-cat="${g.id}">${g.nome} <span style="opacity:.6">${g.escalas.length}</span></button>`).join('');
+    filtrosDiv.querySelectorAll('[data-cat]').forEach(b => b.addEventListener('click', () => {
+      filtroCategoria = b.dataset.cat;
+      renderEscalas();
+    }));
+  }
+
   const conteudoDiv = $('escalas-conteudo');
-  const categoriasFiltradas = filtroCategoria === 'todas' ? todasCategorias : todasCategorias.filter(g => g.id === filtroCategoria);
+  const resultadoDiv = $('busca-escala-resultado');
+
+  let categoriasFiltradas;
+  if (buscando) {
+    // Busca full-text em nome, descCurta e nome da categoria
+    categoriasFiltradas = todasCategorias.map(g => ({
+      ...g,
+      escalas: g.escalas.filter(e => {
+        const haystack = [e.nome, e.descCurta || '', e.desc || '', g.nome].join(' ').toLowerCase();
+        return query.split(/\s+/).every(term => haystack.includes(term));
+      })
+    })).filter(g => g.escalas.length > 0);
+
+    const total = categoriasFiltradas.reduce((s,g) => s + g.escalas.length, 0);
+    resultadoDiv.style.display = '';
+    resultadoDiv.innerHTML = total
+      ? `<strong>${total}</strong> ${total===1?'escala encontrada':'escalas encontradas'} para <strong>"${query}"</strong>`
+      : `Nenhuma escala encontrada para <strong>"${query}"</strong>`;
+  } else {
+    resultadoDiv.style.display = 'none';
+    categoriasFiltradas = filtroCategoria === 'todas' ? todasCategorias : todasCategorias.filter(g => g.id === filtroCategoria);
+  }
 
   if (!categoriasFiltradas.length) {
-    conteudoDiv.innerHTML = '<div class="empty-state"><div class="empty-state-icon">◍</div><div class="empty-state-text">Nenhuma escala nesta categoria</div></div>';
+    conteudoDiv.innerHTML = '<div class="empty-state"><div class="empty-state-icon">◍</div><div class="empty-state-text">Nenhuma escala encontrada</div></div>';
     return;
   }
 
@@ -1094,7 +1142,6 @@ function renderEscalas() {
       </div>
     </div>`).join('');
 
-  // Listeners
   conteudoDiv.querySelectorAll('[data-ver]').forEach(b=>b.addEventListener('click',()=>verEscala(b.dataset.ver)));
   conteudoDiv.querySelectorAll('[data-enviar]').forEach(b=>b.addEventListener('click',()=>enviarEscalaDireta(b.dataset.enviar)));
   conteudoDiv.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>excluirEscala(b.dataset.del)));
