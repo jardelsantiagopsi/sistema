@@ -845,7 +845,7 @@ function renderPacientes() {
     const status = p.status||'ativo';
     const idade = calcularIdade(p.dataNascimento);
     return `<tr>
-      <td class="name">${p.nome}${idade!==null?`<span style="font-size:11px;color:var(--text3);margin-left:8px">${idade}a</span>`:''}</td>
+      <td class="name" data-nav="paciente-detalhe" data-id="${p.id}" style="cursor:pointer">${p.nome}${idade!==null?`<span style="font-size:11px;color:var(--text3);margin-left:8px">${idade}a</span>`:''}</td>
       <td>${fmtDate(p.criadoEm)}</td>
       <td>${nResp}</td>
       <td><span class="badge ${status==='ativo'?'badge-green':'badge-inactive'}" data-toggle-status="${p.id}" data-current-status="${status}" style="cursor:pointer;user-select:none" title="Clique para alternar">${status}</span></td>
