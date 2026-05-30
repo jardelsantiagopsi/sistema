@@ -415,6 +415,7 @@
           <div id="detalhe-dados-pessoais" style="display:flex;gap:14px;flex-wrap:wrap;margin-top:6px;font-size:12px;color:var(--text2);"></div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm" id="btn-editar-paciente-detalhe">✏ Editar</button>
           <button class="btn btn-ghost btn-sm" id="btn-pdf-detalhe">📄 PDF</button>
           <button class="btn btn-green btn-sm" id="btn-wpp-detalhe" style="display:none">💬 WhatsApp</button>
           <button class="btn btn-accent btn-sm" id="btn-enviar-escala-detalhe">📋 Enviar escala</button>
@@ -480,6 +481,22 @@
     <div class="modal-footer">
       <button class="btn btn-ghost" data-close="modal-novo-paciente">Cancelar</button>
       <button class="btn btn-accent" id="btn-criar-paciente">Criar paciente</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-editar-paciente">
+  <div class="modal">
+    <div class="modal-title">Editar Cadastro</div>
+    <div class="form-group"><label class="form-label">Nome completo</label><input type="text" class="form-input" id="ep-nome" placeholder="Nome do paciente"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="form-group"><label class="form-label">Telefone / WhatsApp</label><input type="tel" class="form-input" id="ep-telefone" placeholder="(11) 99999-9999"></div>
+      <div class="form-group"><label class="form-label">Data de nascimento</label><input type="date" class="form-input" id="ep-nascimento"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Observações internas (opcional)</label><textarea class="form-textarea" id="ep-obs" placeholder="Diagnóstico, notas clínicas..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-close="modal-editar-paciente">Cancelar</button>
+      <button class="btn btn-accent" id="btn-salvar-edicao">Salvar alterações</button>
     </div>
   </div>
 </div>
@@ -731,6 +748,8 @@ function initAll() {
 
   // Patient detail extra buttons
   $('btn-pdf-detalhe').addEventListener('click', exportarPDF);
+  $('btn-editar-paciente-detalhe').addEventListener('click', () => abrirEditarPaciente(currentPacienteId));
+  $('btn-salvar-edicao').addEventListener('click', editarPaciente);
   $('btn-wpp-detalhe').addEventListener('click', abrirEnviarEscala);
 
   onSnapshot(collection(db,'pacientes'), snap => {
@@ -829,7 +848,7 @@ function renderPacientes() {
       <td class="name">${p.nome}${idade!==null?`<span style="font-size:11px;color:var(--text3);margin-left:8px">${idade}a</span>`:''}</td>
       <td>${fmtDate(p.criadoEm)}</td>
       <td>${nResp}</td>
-      <td><span class="badge ${status==='ativo'?'badge-green':'badge-inactive'}">${status}</span></td>
+      <td><span class="badge ${status==='ativo'?'badge-green':'badge-inactive'}" data-toggle-status="${p.id}" data-current-status="${status}" style="cursor:pointer;user-select:none" title="Clique para alternar">${status}</span></td>
       <td><div style="display:flex;gap:6px;">
         <button class="btn btn-ghost btn-sm" data-nav="paciente-detalhe" data-id="${p.id}">Ver</button>
         <button class="btn btn-danger btn-sm" data-del="${p.id}">✕</button>
@@ -838,6 +857,7 @@ function renderPacientes() {
   }).join('');
   tbody.querySelectorAll('[data-nav]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.nav,b.dataset.id)));
   tbody.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>excluirPaciente(b.dataset.del)));
+  tbody.querySelectorAll('[data-toggle-status]').forEach(b=>b.addEventListener('click',()=>toggleStatusPaciente(b.dataset.toggleStatus,b.dataset.currentStatus)));
 }
 
 async function criarPaciente() {
@@ -1280,6 +1300,29 @@ async function toggleStatusPaciente(id, statusAtual) {
   const novoStatus = statusAtual === 'ativo' ? 'inativo' : 'ativo';
   await updateDoc(doc(db,'pacientes',id), {status: novoStatus});
   toast(`Paciente marcado como ${novoStatus}`);
+}
+
+function abrirEditarPaciente(id) {
+  const pac = cachedPacientes.find(p => p.id === id);
+  if (!pac) return;
+  $('ep-nome').value = pac.nome || '';
+  $('ep-telefone').value = pac.telefone || '';
+  $('ep-nascimento').value = pac.dataNascimento || '';
+  $('ep-obs').value = pac.obs || '';
+  openModal('modal-editar-paciente');
+}
+
+async function editarPaciente() {
+  const nome = $('ep-nome').value.trim();
+  if (!nome) { toast('O nome é obrigatório'); return; }
+  await updateDoc(doc(db,'pacientes',currentPacienteId), {
+    nome,
+    telefone: $('ep-telefone').value.trim(),
+    dataNascimento: $('ep-nascimento').value || null,
+    obs: $('ep-obs').value.trim()
+  });
+  closeModal('modal-editar-paciente');
+  toast('Cadastro atualizado!');
 }
 
 // ════ ALERTAS CLÍNICOS ════
