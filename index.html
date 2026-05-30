@@ -680,6 +680,7 @@ function navigate(page, pid) {
   if (page==='pacientes') renderPacientes();
   closeSidebar();
 }
+window.navigate = navigate;
 
 function initAll() {
   document.querySelectorAll('.nav-item').forEach(b => b.addEventListener('click', () => navigate(b.dataset.page)));
