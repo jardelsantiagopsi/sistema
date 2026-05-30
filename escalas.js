@@ -629,10 +629,10 @@ export const ESCALAS = [
       ['SE','Quando estou sentindo emoções positivas, sou cuidadoso(a) para não expressá-las'],
       ['REA','Quando estou enfrentando uma situação estressante, eu me forço a pensar sobre ela de uma maneira que me ajude a permanecer calmo(a)'],
       ['SE','Eu controlo minhas emoções não as expressando'],
-      ['REA','Quando quero sentir mais emoção positiva, mudo a maneira como estou pensando sobre a situação'],
+      ['REA','Quando quero sentir mais emoções positivas, penso em algo diferente'],
       ['REA','Eu controlo minhas emoções mudando a maneira como penso sobre a situação em que estou'],
       ['SE','Quando estou sentindo emoções negativas, certifico-me de não expressá-las'],
-      ['SE','Quando quero sentir menos emoção negativa sobre algo, mudo a maneira como penso sobre isso'],
+      ['REA','Quando quero sentir menos emoção negativa sobre algo, penso nisso de outra maneira'],
     ].map(([grp, t]) => ({ texto: t, tipo: 'likert', grupo: grp, opcoes: CONCORD_7 })),
     interpretar: (resp, pontos, escala) => {
       let rea = 0, se = 0, nrea = 0, nse = 0;
@@ -855,16 +855,19 @@ export const ESCALAS = [
       ['Quantas vezes precisou beber pela manhã para se sentir melhor?', ['Nunca','Menos de mensalmente','Mensalmente','Semanalmente','Diariamente']],
       ['Quantas vezes sentiu culpa ou remorso após beber?', ['Nunca','Menos de mensalmente','Mensalmente','Semanalmente','Diariamente']],
       ['Quantas vezes não conseguiu lembrar o que aconteceu na noite anterior?', ['Nunca','Menos de mensalmente','Mensalmente','Semanalmente','Diariamente']],
-      ['Você ou outra pessoa já se machucou por causa da sua bebida?', ['Não','Sim, mas não no último ano','','','Sim, no último ano']],
-      ['Algum parente/amigo/médico se preocupou com sua bebida ou sugeriu que parasse?', ['Não','Sim, mas não no último ano','','','Sim, no último ano']],
+      ['Você ou outra pessoa já se machucou por causa da sua bebida?', ['Não','Sim, mas não no último ano','Sim, no último ano']],
+      ['Algum parente/amigo/médico se preocupou com sua bebida ou sugeriu que parasse?', ['Não','Sim, mas não no último ano','Sim, no último ano']],
     ].map(([t, opcoes]) => ({ texto: t, tipo: 'multipla', opcoes })),
     interpretar: (resp, pontos) => {
+      // Q1-Q8: score 0-4 (index); Q9-Q10: score 0/2/4 (index × 2)
+      let total = 0;
+      resp.forEach((v, i) => { total += i >= 8 ? v * 2 : v; });
       let nivel, cor;
-      if (pontos <= 7)       { nivel = 'Baixo risco / consumo de baixo risco';   cor = 'green'; }
-      else if (pontos <= 15) { nivel = 'Consumo de risco';                       cor = 'amber'; }
-      else if (pontos <= 19) { nivel = 'Consumo nocivo';                         cor = 'red'; }
-      else                   { nivel = 'Provável dependência alcoólica';         cor = 'red'; }
-      return { nivel, cor, pontos, max: 40 };
+      if (total <= 7)       { nivel = 'Baixo risco / consumo de baixo risco';   cor = 'green'; }
+      else if (total <= 15) { nivel = 'Consumo de risco';                       cor = 'amber'; }
+      else if (total <= 19) { nivel = 'Consumo nocivo';                         cor = 'red'; }
+      else                  { nivel = 'Provável dependência alcoólica';         cor = 'red'; }
+      return { nivel, cor, pontos: total, max: 40 };
     }
   },
 
