@@ -1,4 +1,4 @@
-const CACHE = 'clinica-js-v1';
+const CACHE = 'clinica-js-v2';
 const ASSETS = [
   '/sistema/index.html',
   '/sistema/escalas.js',
