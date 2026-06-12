@@ -336,15 +336,18 @@
     <button class="hamburger" id="hamburger" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
-    <div class="mobile-header-brand" onclick="navigate('dashboard')" style="cursor:pointer;">Clínica · Jardel Santiago</div>
+    <div class="mobile-header-brand" onclick="navigate('dashboard')" style="cursor:pointer;display:flex;align-items:center;gap:9px;"><img src="icon-192.png" alt="Clínica JS" style="height:30px;width:30px;border-radius:7px;object-fit:cover;">Clínica · Jardel Santiago</div>
   </div>
   <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
   <aside class="sidebar">
     <div class="sidebar-header" style="display:flex;align-items:flex-start;justify-content:space-between;">
-      <div>
-        <div class="sidebar-brand" onclick="navigate('dashboard')" style="cursor:pointer;" title="Ir ao Dashboard">Clínica</div>
-        <div class="sidebar-tag" onclick="navigate('dashboard')" style="cursor:pointer;">Jardel Santiago</div>
+      <div onclick="navigate('dashboard')" style="cursor:pointer;display:flex;align-items:center;gap:10px;" title="Ir ao Dashboard">
+        <img src="icon-192.png" alt="Clínica JS" style="height:38px;width:38px;border-radius:9px;object-fit:cover;flex-shrink:0;">
+        <div>
+          <div class="sidebar-brand">Clínica</div>
+          <div class="sidebar-tag">Jardel Santiago</div>
+        </div>
       </div>
       <div class="notif-wrap">
         <button class="notif-btn" id="btn-notif" title="Notificações">🔔<span class="notif-badge hidden" id="notif-badge">0</span></button>
