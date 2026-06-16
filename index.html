@@ -118,6 +118,7 @@
   .list-item-date{font-size:12px;color:var(--text3);}
   .toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius-sm);padding:12px 18px;font-size:13px;color:var(--text);z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s;}
   .toast.show{transform:translateY(0);opacity:1;}
+  .toast.toast-error{background:#3a1414;border-color:#a33;color:#ffd9d9;}
   .loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--text3);font-size:13px;}
   .empty-state{text-align:center;padding:48px 20px;color:var(--text3);}
   .empty-state-icon{font-size:36px;margin-bottom:12px;opacity:.5;}
@@ -611,11 +612,17 @@ function fmtDateShort(ts) {
   const d = ts.toDate ? ts.toDate() : new Date(ts);
   return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
 }
-function toast(msg) {
+function toast(msg, isError) {
   let t = $('toast');
   if (!t) { t = document.createElement('div'); t.id='toast'; t.className='toast'; document.body.appendChild(t); }
   t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2800);
+  t.classList.toggle('toast-error', !!isError);
+  clearTimeout(t._hideTimer);
+  t._hideTimer = setTimeout(() => t.classList.remove('show'), isError ? 9000 : 2800);
+}
+function onCarregamentoErro(origem, err) {
+  console.error(`Erro ao carregar "${origem}" do Firestore:`, err);
+  toast(`Não foi possível carregar ${origem} (${err.code || err.message}). Verifique sua conexão/permissões e recarregue a página.`, true);
 }
 function openModal(id) { $(id).classList.add('open'); }
 function closeModal(id) { $(id).classList.remove('open'); }
@@ -778,11 +785,11 @@ function initAll() {
   onSnapshot(collection(db,'pacientes'), snap => {
     cachedPacientes = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0));
     renderPacientes(); renderDashboard(); updateStats();
-  });
+  }, err => onCarregamentoErro('pacientes', err));
   onSnapshot(collection(db,'escalas'), snap => {
     cachedEscalas = snap.docs.map(d=>({id:d.id,...d.data(),tipo:'custom',categoria:'personalizada'}));
     renderEscalas(); updateStats();
-  });
+  }, err => onCarregamentoErro('escalas', err));
   let respostasCarregadas = false;
   onSnapshot(collection(db,'respostas'), snap => {
     cachedRespostas = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.criadoEm?.seconds||0)-(a.criadoEm?.seconds||0));
@@ -802,7 +809,7 @@ function initAll() {
       });
     }
     respostasCarregadas = true;
-  });
+  }, err => onCarregamentoErro('respostas', err));
 
   renderBuilder();
   renderEscalas();
