@@ -1600,6 +1600,12 @@ function exportarPDF() {
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sistema/sw.js');
+  let reloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (reloading) return;
+    reloading = true;
+    window.location.reload();
+  });
 }
 </script>
 <div class="toast" id="toast"></div>

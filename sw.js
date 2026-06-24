@@ -1,7 +1,5 @@
-const CACHE = 'clinica-js-v2';
+const CACHE = 'clinica-v3';
 const ASSETS = [
-  '/sistema/index.html',
-  '/sistema/escalas.js',
   '/sistema/manifest.json',
   '/sistema/icon-192.png',
   '/sistema/icon-512.png'
@@ -13,10 +11,11 @@ self.addEventListener('install', e => {
 });
 
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys =>
-    Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-  ));
-  self.clients.claim();
+  e.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)));
+    await self.clients.claim();
+  })());
 });
 
 self.addEventListener('notificationclick', e => {
