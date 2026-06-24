@@ -681,10 +681,13 @@ async function enviar() {
     });
     showScreen('success-screen');
   } catch(e) {
-    console.error('Erro ao enviar:', e);
+    console.error('Erro ao enviar:', e.code, e.message);
     $('btn-submit').disabled = false;
     $('btn-submit').textContent = 'Enviar respostas';
-    alert('Não foi possível enviar. Verifique sua conexão e tente novamente.');
+    const msg = e.code === 'permission-denied'
+      ? 'Permissão negada pelo servidor. As regras de segurança do banco de dados precisam ser atualizadas.'
+      : 'Não foi possível enviar. Verifique sua conexão e tente novamente.';
+    alert(msg);
   }
 }
 
