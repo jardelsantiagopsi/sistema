@@ -442,6 +442,11 @@
       </div>
 
       <div class="card">
+        <div class="card-title">Escalas enviadas <span class="card-subtitle">histórico de envios para este paciente</span></div>
+        <div id="detalhe-envios"></div>
+      </div>
+
+      <div class="card">
         <div class="card-title">Insights clínicos <span class="card-subtitle">interpretação da resposta mais recente</span></div>
         <div id="detalhe-insights"></div>
       </div>
@@ -524,6 +529,7 @@
 <div class="modal-overlay" id="modal-enviar-escala">
   <div class="modal">
     <div class="modal-title">Enviar Escala</div>
+    <div class="form-group"><label class="form-label">Paciente</label><select class="form-select" id="enviar-paciente-select"><option value="">— Selecionar paciente —</option></select></div>
     <div class="form-group"><label class="form-label">Categoria</label><select class="form-select" id="enviar-categoria-select"></select></div>
     <div class="form-group"><label class="form-label">Escala</label><select class="form-select" id="enviar-escala-select"></select></div>
     <div class="link-box" id="escala-link-box" style="display:none"><div class="link-text" id="escala-link-text">—</div><button class="btn btn-ghost btn-sm" id="btn-copiar-escala-link">Copiar</button></div>
@@ -586,6 +592,7 @@ const db = getFirestore(fbApp);
 
 let currentPacienteId = null;
 let currentEscalaLinkUrl = '';
+let cachedEnvios = [];
 let builderPerguntas = [];
 let cachedPacientes = [];
 let cachedEscalas = [];
@@ -804,6 +811,14 @@ function initAll() {
     respostasCarregadas = true;
   });
 
+  onSnapshot(collection(db, 'envios'), snap => {
+    cachedEnvios = snap.docs.map(d => ({id: d.id, ...d.data()}))
+      .sort((a,b) => (b.enviadoEm?.seconds||0) - (a.enviadoEm?.seconds||0));
+    if (currentPacienteId && document.querySelector('.page.active')?.id === 'page-paciente-detalhe') {
+      renderPacienteDetalhe(currentPacienteId);
+    }
+  });
+
   renderBuilder();
   renderEscalas();
 }
@@ -943,6 +958,32 @@ function renderPacienteDetalhe(id) {
   renderPanoramaClinico(id);
 
   const resps = cachedRespostas.filter(r=>r.pacienteId===id);
+
+  // ── ESCALAS ENVIADAS ──
+  const enviosPac = cachedEnvios.filter(e => e.pacienteId === id);
+  const enviosDiv = $('detalhe-envios');
+  if (!enviosPac.length) {
+    enviosDiv.innerHTML = '<div class="empty-state"><div class="empty-state-icon">◌</div><div class="empty-state-text">Nenhuma escala enviada ainda</div></div>';
+  } else {
+    enviosDiv.innerHTML = enviosPac.map(env => {
+      const resp = cachedRespostas.find(r =>
+        r.pacienteId === id &&
+        r.escalaId === env.escalaId &&
+        (r.criadoEm?.seconds || 0) >= (env.enviadoEm?.seconds || 0)
+      );
+      const statusHtml = resp
+        ? `<span class="badge badge-green">Respondido em ${fmtDate(resp.criadoEm)}</span>`
+        : `<span class="badge badge-amber">Aguardando resposta</span>`;
+      return `<div class="list-item" ${resp ? `data-resp="${resp.id}"` : ''} style="${resp ? 'cursor:pointer' : ''}">
+        <div class="list-item-header">
+          <span class="name" style="color:var(--text);font-weight:400">${env.escalaNome}</span>
+          <span class="list-item-date">${fmtDate(env.enviadoEm)}</span>
+        </div>
+        <div style="margin-top:4px">${statusHtml}</div>
+      </div>`;
+    }).join('');
+    enviosDiv.querySelectorAll('[data-resp]').forEach(el => el.addEventListener('click', () => verResposta(el.dataset.resp)));
+  }
 
   // ── INSIGHTS (resposta mais recente de cada escala) ──
   const insightsDiv = $('detalhe-insights');
@@ -1243,6 +1284,12 @@ function abrirEnviarEscala() {
   catSel.innerHTML = grupos.map(g => `<option value="${g.id}">${g.nome}</option>`).join('') +
     (cachedEscalas.length ? '<option value="personalizada">Minhas escalas personalizadas</option>' : '');
   popularEscalasDoSelect();
+
+  const pacSel = $('enviar-paciente-select');
+  const ativos = cachedPacientes.filter(p => (p.status || 'ativo') === 'ativo').sort((a,b) => a.nome.localeCompare(b.nome));
+  pacSel.innerHTML = '<option value="">— Selecionar paciente —</option>' +
+    ativos.map(p => `<option value="${p.id}" ${p.id === currentPacienteId ? 'selected' : ''}>${p.nome}</option>`).join('');
+
   $('escala-link-box').style.display='none';
   $('btn-wpp-escala').style.display='none';
   openModal('modal-enviar-escala');
@@ -1271,11 +1318,25 @@ function enviarEscalaDireta(id) {
 }
 
 function gerarEscalaLink() {
-  const id=$('enviar-escala-select').value;
-  currentEscalaLinkUrl=`${PATIENT_BASE_URL}?escala=${id}${currentPacienteId?'&p='+currentPacienteId:''}`;
-  $('escala-link-text').textContent=currentEscalaLinkUrl;
-  $('escala-link-box').style.display='flex';
-  $('btn-wpp-escala').style.display='inline-flex';
+  const id = $('enviar-escala-select').value;
+  const pacId = $('enviar-paciente-select').value;
+  if (pacId) currentPacienteId = pacId;
+
+  currentEscalaLinkUrl = `${PATIENT_BASE_URL}?escala=${id}${currentPacienteId ? '&p=' + currentPacienteId : ''}`;
+  $('escala-link-text').textContent = currentEscalaLinkUrl;
+  $('escala-link-box').style.display = 'flex';
+  $('btn-wpp-escala').style.display = 'inline-flex';
+
+  if (currentPacienteId) {
+    const escala = getEscalaById(id, cachedEscalas);
+    addDoc(collection(db, 'envios'), {
+      pacienteId: currentPacienteId,
+      escalaId: id,
+      escalaNome: escala?.nome || id,
+      linkUrl: currentEscalaLinkUrl,
+      enviadoEm: serverTimestamp()
+    });
+  }
 }
 
 function renderRespostas() {
