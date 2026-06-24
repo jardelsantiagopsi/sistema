@@ -1322,7 +1322,13 @@ function gerarEscalaLink() {
   const pacId = $('enviar-paciente-select').value;
   if (pacId) currentPacienteId = pacId;
 
-  currentEscalaLinkUrl = `${PATIENT_BASE_URL}?escala=${id}${currentPacienteId ? '&p=' + currentPacienteId : ''}`;
+  let url = `${PATIENT_BASE_URL}?escala=${id}`;
+  if (currentPacienteId) {
+    url += `&p=${currentPacienteId}`;
+    const pac = cachedPacientes.find(p => p.id === currentPacienteId);
+    if (pac) url += `&nome=${encodeURIComponent(pac.nome.split(' ')[0])}`;
+  }
+  currentEscalaLinkUrl = url;
   $('escala-link-text').textContent = currentEscalaLinkUrl;
   $('escala-link-box').style.display = 'flex';
   $('btn-wpp-escala').style.display = 'inline-flex';

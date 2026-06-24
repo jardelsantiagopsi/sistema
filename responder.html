@@ -479,6 +479,7 @@ const db = getFirestore(fbApp);
 const params = new URLSearchParams(window.location.search);
 const escalaId = params.get('escala');
 const pacienteId = params.get('p');
+const nomeParam = params.get('nome');
 
 const $ = id => document.getElementById(id);
 let escala = null;
@@ -516,14 +517,9 @@ async function init() {
     } catch(e) { showScreen('error-screen'); return; }
   }
 
-  // Buscar nome do paciente (opcional, para personalização)
-  if (pacienteId) {
-    try {
-      const snap = await getDoc(doc(db, 'pacientes', pacienteId));
-      if (snap.exists()) {
-        pacienteNome = snap.data().nome;
-      }
-    } catch(e) { /* ignora silenciosamente */ }
+  // Nome do paciente — vem na URL para evitar leitura não autenticada do banco
+  if (nomeParam) {
+    pacienteNome = nomeParam;
   }
 
   renderForm();
